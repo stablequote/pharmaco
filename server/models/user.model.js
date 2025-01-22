@@ -41,6 +41,10 @@ const userSchema = mongoose.Schema({
     //         ref: 'Sales', // Links to the sales made by the user
     //     },
     // ],
+    refreshToken: {
+        type: String, // The refresh token is stored as a string
+        default: null, // Default to null if no refresh token exists yet
+    }
 });
 
 module.exports = mongoose.model('User', userSchema);
