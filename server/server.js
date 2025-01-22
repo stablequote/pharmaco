@@ -9,13 +9,13 @@ const DB_URI = process.env.DB_URI
 const authRouter = require("./routes/user.route")
 
 
-// try {
-//     mongoose.connect(DB_URI).then(() => {
-//         console.log("connected to db")
-//     })
-// } catch (error) {
-//     console.log(error)
-// }
+try {
+    mongoose.connect(DB_URI).then(() => {
+        console.log("connected to db")
+    })
+} catch (error) {
+    console.log(error)
+}
 
 // db connection
 mongoose.set('strictQuery', false)

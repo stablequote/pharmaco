@@ -7,7 +7,7 @@ const userSchema = mongoose.Schema({
     },
     username: {
         type: String,
-        unique: true,
+        // unique: true,
         required: true,
     },
     role: {
@@ -15,13 +15,13 @@ const userSchema = mongoose.Schema({
         enum: ['owner', 'manager', 'staff'], // Define roles for the users
         default: 'staff',
     },
-    branch: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Branch', // Links users to their branch
-        required: function () {
-            return this.role !== 'owner'; // Only non-owners need a branch
-        },
-    },
+    // branch: {
+    //     type: mongoose.Schema.Types.ObjectId,
+    //     ref: 'Branch', // Links users to their branch
+    //     required: function () {
+    //         return this.role !== 'owner'; // Only non-owners need a branch
+    //     },
+    // },
     dateAdded: {
         type: Date,
         default: Date.now,
@@ -35,12 +35,12 @@ const userSchema = mongoose.Schema({
         type: String,
         required: true,
     },
-    sales: [
-        {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'Sales', // Links to the sales made by the user
-        },
-    ],
+    // sales: [
+    //     {
+    //         type: mongoose.Schema.Types.ObjectId,
+    //         ref: 'Sales', // Links to the sales made by the user
+    //     },
+    // ],
 });
 
 module.exports = mongoose.model('User', userSchema);
