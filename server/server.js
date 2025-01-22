@@ -6,14 +6,16 @@ require('dotenv').config();
 const bodyParser = require('body-parser');
 
 const DB_URI = process.env.DB_URI
+const authRouter = require("./routes/user.route")
 
-try {
-    mongoose.connect(DB_URI).then(() => {
-        console.log("connected to db")
-    })
-} catch (error) {
-    console.log(error)
-}
+
+// try {
+//     mongoose.connect(DB_URI).then(() => {
+//         console.log("connected to db")
+//     })
+// } catch (error) {
+//     console.log(error)
+// }
 
 // db connection
 mongoose.set('strictQuery', false)
@@ -24,16 +26,10 @@ app.use(cors({
     credentials: 'true',
 }))
 app.use(express.json());
-// app.use(express.urlencoded({ extended: true }));
 app.use(bodyParser.urlencoded({extended: true}))
 
 // routes
-// app.use("/auth", authRouter)
-
-// authentication
-// app.post("/login", loginUser, (req, res) => {
-//     res.redirect("/secret")
-// })
+app.use("/auth", authRouter)
 
 // running the server
 app.listen(5005, () => {

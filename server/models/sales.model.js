@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const salesSchema = new mongoose.Schema({
+const salesSchema = mongoose.Schema({
     product: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Inventory', // Links the sale to a product in inventory
