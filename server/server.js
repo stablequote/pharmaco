@@ -1,12 +1,41 @@
-const express = require('express');
-const app = express();
+const express = require('express')
+const app = express()
+const mongoose = require('mongoose');
+const cors = require('cors')
+require('dotenv').config();
+const bodyParser = require('body-parser');
 
-port = 5000 || process.env.PORT;
+const DB_URI = process.env.DB_URI
 
-app.get("/product/add", (req, res) => {
-    res.send("everything is working perfectly.")
-} )
+try {
+    mongoose.connect(DB_URI).then(() => {
+        console.log("connected to db")
+    })
+} catch (error) {
+    console.log(error)
+}
 
-app.listen(port, () => {
-    console.log("server is running on port:", port)
+// db connection
+mongoose.set('strictQuery', false)
+
+// middleware
+app.use(cors({
+    origin: ["http://localhost:5174", "https://pharmacia.onrender.com", "https://pharmacia.vercel.app"],
+    credentials: 'true',
+}))
+app.use(express.json());
+// app.use(express.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({extended: true}))
+
+// routes
+// app.use("/auth", authRouter)
+
+// authentication
+// app.post("/login", loginUser, (req, res) => {
+//     res.redirect("/secret")
+// })
+
+// running the server
+app.listen(5005, () => {
+    console.log("server running on port 5005")
 })
