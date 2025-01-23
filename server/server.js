@@ -8,7 +8,7 @@ const bodyParser = require('body-parser');
 const DB_URI = process.env.DB_URI
 
 const authRouter = require("./routes/user.route")
-const productRouter = require("./routes/product.route")
+const inventoryRouter = require("./routes//inventory.route")
 
 
 
@@ -33,7 +33,7 @@ app.use(bodyParser.urlencoded({extended: true}))
 
 // routes
 app.use("/auth", authRouter)
-app.use("/product", productRouter)
+app.use("/inventory", inventoryRouter)
 
 // running the server
 app.listen(5005, () => {

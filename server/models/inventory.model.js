@@ -15,7 +15,7 @@ const inventorySchema = mongoose.Schema({
     },
     expiryDate: {
         type: Date,
-        required: true,
+        // required: true,
     },
     price: {
         type: Number,
@@ -25,19 +25,21 @@ const inventorySchema = mongoose.Schema({
         type: Number,
         required: true,
     },
-    supplier: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Supplier', // Links each product to its supplier
-        required: true,
+    // supplier: {
+    //     type: mongoose.Schema.Types.ObjectId,
+    //     ref: 'Supplier', // Links each product to its supplier
+    //     required: true,
+    // },
+    shelf: {
+        type: String, // Specifies where the product is stored
+        // required: true,
+        
     },
-    location: {
-        shelf: String, // Specifies where the product is stored
-    },
-    branch: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Branch', // Links the inventory to a specific branch
-        required: true,
-    },
+    // branch: {
+    //     type: mongoose.Schema.Types.ObjectId,
+    //     ref: 'Branch', // Links the inventory to a specific branch
+    //     required: true,
+    // },
 });
 
 module.exports = mongoose.model('Inventory', inventorySchema);
