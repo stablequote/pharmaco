@@ -56,3 +56,54 @@ exports.generateBarcode = async (req, res) => {
         res.status(500).json({ error: 'Failed to generate barcode.' });
     }
 };
+
+// Update a product
+exports.updateProduct = async (req, res) => {
+    try {
+        const { productID } = req.params;
+        const updates = req.body;
+
+        const updatedProduct = await Inventory.findByIdAndUpdate(productID, updates, { new: true });
+        if (!updatedProduct) return res.status(404).json({ message: 'Product not found.' });
+
+        res.status(200).json({ message: 'Product updated successfully.', product: updatedProduct });
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to update product.' });
+    }
+};
+
+// Delete a single product
+exports.deleteSingleProduct = async (req, res) => {
+    try {
+        const { productID } = req.params;
+
+        const deletedProduct = await Inventory.findByIdAndDelete(productID);
+        if (!deletedProduct) return res.status(404).json({ message: 'Product not found.' });
+
+        res.status(200).json({ message: 'Product deleted successfully.' });
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to delete product.' });
+    }
+};
+
+// Delete multiple products
+exports.deleteMultipleProducts = async (req, res) => {
+    try {
+        const { productIDs } = req.body; // Array of product IDs to delete
+
+        const result = await Inventory.deleteMany({ _id: { $in: productIDs } });
+        res.status(200).json({ message: `${result.deletedCount} products deleted successfully.` });
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to delete products.' });
+    }
+};
+
+// List all products
+exports.listAllProducts = async (req, res) => {
+    try {
+        const products = await Inventory.find({});
+        res.status(200).json(products);
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to list products.' });
+    }
+};

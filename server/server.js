@@ -6,7 +6,10 @@ require('dotenv').config();
 const bodyParser = require('body-parser');
 
 const DB_URI = process.env.DB_URI
+
 const authRouter = require("./routes/user.route")
+const productRouter = require("./routes/product.route")
+
 
 
 try {
@@ -30,6 +33,7 @@ app.use(bodyParser.urlencoded({extended: true}))
 
 // routes
 app.use("/auth", authRouter)
+app.use("/product", productRouter)
 
 // running the server
 app.listen(5005, () => {
