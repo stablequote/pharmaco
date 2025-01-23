@@ -35,6 +35,15 @@ exports.makeSale = async (req, res) => {
     }
 };
 
+const listSales = async (req, res) => {
+    try {
+        const sales = await Sales.find({})
+        return res.status(201).json({message: 'sales fetched successfully', sales})
+    } catch (error) {
+        console.log(error)
+    }
+}
+
 // Generate receipt
 exports.generateReceipt = async (req, res) => {
     try {

@@ -10,8 +10,6 @@ const DB_URI = process.env.DB_URI
 const authRouter = require("./routes/user.route")
 const inventoryRouter = require("./routes//inventory.route")
 
-
-
 try {
     mongoose.connect(DB_URI).then(() => {
         console.log("connected to db")
