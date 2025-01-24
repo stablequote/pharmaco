@@ -7,33 +7,82 @@ import { data } from '../utils/data';
 //defining columns outside of the component is fine, is stable
 const columns = [
   {
-    accessorKey: 'id',
-    header: 'ID',
+    accessorKey: 'shelf',
+    header: 'Shelf',
     size: 40,
   },
   {
-    accessorKey: 'firstName',
-    header: 'First Name',
+    accessorKey: 'product',
+    header: 'Product',
     size: 120,
   },
   {
-    accessorKey: 'lastName',
-    header: 'Last Name',
+    accessorKey: 'quantity',
+    header: 'Quantity',
+    size: 120,
+    mantineEditTextInputProps: ({ cell }) => ({
+      ...getCommonEditTextInputProps(cell),
+    }),
+     //custom conditional format and styling
+     Cell: ({ cell }) => (
+      <Box
+        sx={(theme) => ({
+          backgroundColor:
+          cell.getValue() < 100 ? theme.colors.red[9] : theme.colors.white,
+          borderRadius: '4px',
+          color: cell.getValue() < 100 ? 'white' : theme.colors.blue,
+          maxWidth: '9ch',
+          padding: '4px',
+        })}
+      >
+        {cell.getValue()?.toLocaleString?.('en-US', {
+          // style: 'currency',
+          currency: 'SDG',
+          minimumFractionDigits: 0,
+          maximumFractionDigits: 0,
+        })}
+      </Box>
+    ),
+  },
+  {
+    accessorKey: 'unit',
+    header: 'Unit',
     size: 120,
   },
   {
-    accessorKey: 'company',
-    header: 'Company',
-    size: 300,
+    accessorKey: 'expiryDate',
+    header: 'Expiry Date',
+    size: 100,
   },
   {
-    accessorKey: 'city',
-    header: 'City',
+    accessorKey: 'price',
+    header: 'Price',
+    size: 100,
+    mantineEditTextInputProps: ({ cell }) => ({
+      ...getCommonEditTextInputProps(cell),
+    }),
+     //custom conditional format and styling
+     Cell: ({ cell }) => (
+      <Box
+        sx={(theme) => ({
+          borderRadius: '4px',
+          maxWidth: '9ch',
+          padding: '4px',
+        })}
+      >
+        {cell.getValue()?.toLocaleString?.('en-US', {
+          style: 'currency',
+          currency: 'SDG',
+          minimumFractionDigits: 0,
+          maximumFractionDigits: 0,
+        })}
+      </Box>
+    ),
   },
   {
-    accessorKey: 'country',
-    header: 'Country',
-    size: 220,
+    accessorKey: 'salePrice',
+    header: 'Sale Price',
+    size: 100,
   },
 ];
 
@@ -62,6 +111,10 @@ const DataGrid = () => {
     columnFilterDisplayMode: 'popover',
     paginationDisplayMode: 'pages',
     positionToolbarAlertBanner: 'bottom',
+    initialState: {
+      pagination: {pageSize: 5},
+      density: "xs"
+    },
     renderTopToolbarCustomActions: ({ table }) => (
       <Box
         sx={{

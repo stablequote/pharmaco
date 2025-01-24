@@ -4,16 +4,16 @@ import { Navbar } from '@mantine/core';
 
 const AppNavbar = () => {
   const activeStyle = {
-    backgroundColor: '#f0f0f0', // Light background for the active link
+    backgroundColor: '#009099', // Light background for the active link
     fontWeight: 'bold',        // Highlight the text
     borderRadius: '4px',       // Rounded edges for better UI
   };
 
   return (
-    <Navbar width={{ base: 300 }} p="xs">
+    <Navbar width={{ base: 250 }} p="xs" sx={{background: '#1D242E'}}>
       <NavLink
         to="/"
-        style={({ isActive }) => (isActive ? activeStyle : undefined)}
+        style={({ isActive }) => (isActive ? activeStyle : undefined )}
       >
         Home
       </NavLink>

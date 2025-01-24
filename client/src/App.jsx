@@ -4,6 +4,7 @@ import DashboardLayout from './components/DashboardLayout';
 import Inventory from './pages/Inventory';
 import Sales from './pages/Sales';
 import Home from './pages/Home';
+import './App.css'
 
 const App = () => {
   return (

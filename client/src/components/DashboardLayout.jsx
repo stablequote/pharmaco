@@ -8,8 +8,8 @@ function DashboardWrapper() {
       padding="md"
       navbar={<AppNavbar />}
       header={
-        <Header height={60} p="xs">
-          <Text>Pharmacy Management System</Text>
+        <Header height={60} p="xs" sx={{backgroundColor: '#1D242E'}}>
+          <Text color='white' fw="bold" fz="lg">Pharmacia</Text>
         </Header>
       }
       // footer={
