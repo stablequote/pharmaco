@@ -7,6 +7,11 @@ import { data } from '../utils/data';
 //defining columns outside of the component is fine, is stable
 const columns = [
   {
+    accessorKey: 'id',
+    header: 'ID',
+    size: 40,
+  },
+  {
     accessorKey: 'shelf',
     header: 'Shelf',
     size: 40,
@@ -83,6 +88,26 @@ const columns = [
     accessorKey: 'salePrice',
     header: 'Sale Price',
     size: 100,
+    mantineEditTextInputProps: ({ cell }) => ({
+      ...getCommonEditTextInputProps(cell),
+    }),
+     //custom conditional format and styling
+     Cell: ({ cell }) => (
+      <Box
+        sx={(theme) => ({
+          borderRadius: '4px',
+          maxWidth: '9ch',
+          padding: '4px',
+        })}
+      >
+        {cell.getValue()?.toLocaleString?.('en-US', {
+          style: 'currency',
+          currency: 'SDG',
+          minimumFractionDigits: 0,
+          maximumFractionDigits: 0,
+        })}
+      </Box>
+    ),
   },
 ];
 

@@ -1,14 +1,15 @@
-// export const Person = {
-//     id: number;
-//     firstName: string;
-//     lastName: string;
-//     company: string;
-//     city: string;
-//     country: string;
-//   };
-  
+import { v4 as uuidv4 } from 'uuid'; // Use the 'uuid' package to generate unique IDs
+
+// Helper function to generate a 4- or 5-digit ID
+const generateShortID = () => {
+  const uuid = uuidv4(); // Generate a full UUID
+  const shortID = parseInt(uuid.replace(/-/g, '').slice(0, 5), 16) % 90000 + 10000; // Create a 5-digit ID
+  return shortID.toString();
+};
+
 export const data = [
   {
+    id: generateShortID(),
     product: "Paracetamol",
     quantity: 100,
     unit: "tablet",
@@ -18,6 +19,7 @@ export const data = [
     shelf: "A1",
   },
   {
+    id: generateShortID(),
     product: "Ibuprofen",
     quantity: 200,
     unit: "tablet",
@@ -27,24 +29,27 @@ export const data = [
     shelf: "B3",
   },
   {
+    id: generateShortID(),
     product: "Amoxicillin",
     quantity: 150,
-    unit: "box",
+    unit: "capsule",
     expiryDate: "2024-08-20",
     price: 75.0,
     salePrice: 85.0,
     shelf: "C2",
   },
   {
+    id: generateShortID(),
     product: "Cough Syrup",
     quantity: 50,
-    unit: "bottle",
+    unit: "ml",
     expiryDate: "2025-02-28",
     price: 120.0,
     salePrice: 150.0,
     shelf: "D4",
   },
   {
+    id: generateShortID(),
     product: "Vitamin C",
     quantity: 300,
     unit: "tablet",
@@ -54,6 +59,7 @@ export const data = [
     shelf: "E5",
   },
   {
+    id: generateShortID(),
     product: "Insulin",
     quantity: 100,
     unit: "vial",
@@ -63,6 +69,7 @@ export const data = [
     shelf: "F1",
   },
   {
+    id: generateShortID(),
     product: "Antacid",
     quantity: 80,
     unit: "tablet",
@@ -72,6 +79,7 @@ export const data = [
     shelf: "G2",
   },
   {
+    id: generateShortID(),
     product: "Antiseptic Cream",
     quantity: 40,
     unit: "tube",
@@ -81,6 +89,7 @@ export const data = [
     shelf: "H3",
   },
   {
+    id: generateShortID(),
     product: "Ceftriaxone Injection",
     quantity: 60,
     unit: "vial",
@@ -90,6 +99,7 @@ export const data = [
     shelf: "I4",
   },
   {
+    id: generateShortID(),
     product: "Eye Drops",
     quantity: 120,
     unit: "bottle",
@@ -98,4 +108,54 @@ export const data = [
     salePrice: 120.0,
     shelf: "J1",
   },
-]
+  {
+    id: generateShortID(),
+    product: "Pain Relief Gel",
+    quantity: 90,
+    unit: "tube",
+    expiryDate: "2024-10-01",
+    price: 110.0,
+    salePrice: 135.0,
+    shelf: "K2",
+  },
+  {
+    id: generateShortID(),
+    product: "Multivitamins",
+    quantity: 220,
+    unit: "tablet",
+    expiryDate: "2026-03-30",
+    price: 80.0,
+    salePrice: 100.0,
+    shelf: "L3",
+  },
+  {
+    id: generateShortID(),
+    product: "Antihistamine",
+    quantity: 70,
+    unit: "tablet",
+    expiryDate: "2024-05-15",
+    price: 45.0,
+    salePrice: 55.0,
+    shelf: "M4",
+  },
+  {
+    id: generateShortID(),
+    product: "Anti-Fungal Cream",
+    quantity: 50,
+    unit: "tube",
+    expiryDate: "2025-11-22",
+    price: 95.0,
+    salePrice: 120.0,
+    shelf: "N5",
+  },
+  {
+    id: generateShortID(),
+    product: "Oral Rehydration Salts",
+    quantity: 130,
+    unit: "packet",
+    expiryDate: "2026-07-10",
+    price: 15.0,
+    salePrice: 25.0,
+    shelf: "O6",
+  },
+];
