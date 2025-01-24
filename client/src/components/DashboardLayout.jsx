@@ -12,11 +12,11 @@ function DashboardWrapper() {
           <Text>Pharmacy Management System</Text>
         </Header>
       }
-      footer={
-        <Box height={60} p="xs">
-          <Text align="center">© 2025 Pharmacy Inc.</Text>
-        </Box>
-      }
+      // footer={
+      //   <Box height={60} p="xs">
+      //     <Text align="center">© 2025 Pharmacy Inc.</Text>
+      //   </Box>
+      // }
       styles={(theme) => ({
         main: { backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.gray[0] },
       })}
