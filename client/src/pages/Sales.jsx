@@ -28,6 +28,7 @@ import { IconSearch, IconPlus, IconUser, IconShoppingCartPlus } from "@tabler/ic
 
 import {data as products} from '../utils/data'
 import medicineImage from '../assets/medicine.jpg'
+import BarcodeScanner from "../components/BarcodeScanner";
 
 const Sales = () => {
   const [cart, setCart] = useState([]);
@@ -71,6 +72,7 @@ const Sales = () => {
   return (
     <Container size="xl">
       <Grid>
+      <BarcodeScanner />
         {/* Filters and Search Bar */}
         <Grid.Col span={8}>
           <Group spacing="sm" mb="md">
