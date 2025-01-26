@@ -29,6 +29,12 @@ const AppNavbar = () => {
       >
         Sales
       </NavLink>
+      <NavLink
+        to="/verify"
+        style={({ isActive }) => (isActive ? activeStyle : undefined)}
+      >
+        Verify Transaction
+      </NavLink>
     </Navbar>
   );
 };
