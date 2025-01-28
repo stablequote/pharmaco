@@ -1,6 +1,7 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { Navbar } from '@mantine/core';
+import { IconHome } from '@tabler/icons-react';
 
 const AppNavbar = () => {
   const activeStyle = {
@@ -13,8 +14,10 @@ const AppNavbar = () => {
     <Navbar width={{ base: 250 }} p="xs" sx={{background: '#1D242E'}}>
       <NavLink
         to="/"
-        style={({ isActive }) => (isActive ? activeStyle : undefined )}
+        style={({ isActive }) => (isActive ? activeStyle : undefined)}
+        
       >
+        <IconHome />
         Home
       </NavLink>
       <NavLink

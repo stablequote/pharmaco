@@ -6,6 +6,7 @@ import Sales from './pages/Sales';
 import Home from './pages/Home';
 import './App.css'
 import VerifiyTransaction from './pages/VerifyTransaction';
+import PosPage from './pages/PosPage';
 
 const App = () => {
   return (
@@ -14,7 +15,7 @@ const App = () => {
         <Route path="/" element={<DashboardLayout />}>
           <Route index element={<Home />} />
           <Route path="inventory" element={<Inventory />} />
-          <Route path="sales" element={<Sales />} />
+          <Route path="sales" element={<PosPage />} />
           <Route path="verify" element={<VerifiyTransaction />} />
         </Route>
       </Routes>
