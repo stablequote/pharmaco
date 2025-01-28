@@ -9,7 +9,7 @@ function DashboardWrapper() {
   return (
     <AppShell
       padding="md"
-      // navbar={<AppNavbar />}
+      navbar={<AppNavbar />}
       header={
         <Header height={60} p="xs" sx={{backgroundColor: '#1D242E'}}>
           <Flex>
@@ -29,7 +29,7 @@ function DashboardWrapper() {
     >
       {/* Your application here */}
       <Outlet />
-        <AppNavbar />
+        {/* <AppNavbar /> */}
     </AppShell>
   );
 }
