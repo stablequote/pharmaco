@@ -11,8 +11,8 @@ const VerifiyTransaction = () => {
     <Container size="md">
       <Text fw="bold" fz="xl" mb="md">Verify MBOK Transaction</Text>
       <Box sx={{width: 400}}>
-        <TextInput placeholder='enter transaction ID' mb="xs" />
-        <TextInput placeholder='enter amount' mb="md" />
+        <TextInput placeholder='enter transaction ID' mb={5} />
+        <TextInput placeholder='enter amount' mb={8} />
         <Button onClick={() => showModal()}>Check</Button>
       </Box>
       <Modal >
