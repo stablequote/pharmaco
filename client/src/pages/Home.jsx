@@ -1,5 +1,7 @@
-import { Text, Container, Flex, Box, Button } from '@mantine/core';
+import { Text, Container, Flex, Box, Button, Anchor,  } from '@mantine/core';
 import React from 'react';
+import { NavLink } from 'react-router-dom';
+import Sales from './Sales';
 
 const Home = () => {
   return (
@@ -7,13 +9,13 @@ const Home = () => {
       <Text fw="bold" fz="xl" mb="md">Quick Access</Text>
         <Flex justify="space-between" sx={{width: 320}}>
           <Box>
-            <Button>POS</Button>
+            <Button component={NavLink} to="/sales">POS</Button>
           </Box>
           <Box>
-            <Button>Inventory</Button>
+            <Button component={NavLink} to="/inventory">Inventory</Button>
           </Box>
           <Box>
-            <Button>Sales</Button>
+            <Button component={NavLink} to="/verify">Verify</Button>
           </Box>
         </Flex>
     </Container>
