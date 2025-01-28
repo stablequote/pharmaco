@@ -9,7 +9,7 @@ const VerifiyTransaction = () => {
     }
   return (
     <Container size="md">
-      <Text fw="bold" fz="xl" mb="md">Verifiy MBOK Transaction</Text>
+      <Text fw="bold" fz="xl" mb="md">Verify MBOK Transaction</Text>
       <Box sx={{width: 400}}>
         <TextInput placeholder='enter transaction ID' mb="xs" />
         <TextInput placeholder='enter amount' mb="md" />
