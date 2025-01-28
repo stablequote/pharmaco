@@ -40,7 +40,7 @@ const Inventory = () => {
                 }
               })}
               placeholder="Import from Excel" 
-              accept="xls, xlsx, csv" 
+              accept="text/csv, application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" 
               color='blue' 
               variant="filled" 
               icon={<IconFileImport />}  
