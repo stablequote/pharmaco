@@ -5,3 +5,15 @@ a {
   margin-bottom: 4px;
   padding: 7px;
 }
+
+section.mantine-Paper-root {
+  max-width: 250px !important;
+}
+
+#html5-qrcode-button-camera-start {
+  background-color: #228be6;
+  color: white;
+  border: none;
+  padding: 0.7rem;
+  border-radius: 5px;
+}
