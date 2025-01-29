@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { Navbar } from '@mantine/core';
+import { Button, Divider, Navbar } from '@mantine/core';
 import { IconHome } from '@tabler/icons-react';
 
 const AppNavbar = () => {
@@ -38,6 +38,40 @@ const AppNavbar = () => {
       >
         Verify Transaction
       </NavLink>
+      <Divider size={1} my={10} />
+      <NavLink
+        to="/orders"
+        style={({ isActive }) => (isActive ? activeStyle : undefined)}
+      >
+        Orders
+      </NavLink>
+      <NavLink
+        to="/suppliers"
+        style={({ isActive }) => (isActive ? activeStyle : undefined)}
+      >
+        Suppliers
+      </NavLink>
+      {/* <Divider size={1} my={10} /> */}
+      <NavLink
+        to="/reports"
+        style={({ isActive }) => (isActive ? activeStyle : undefined)}
+      >
+        Reports
+      </NavLink>
+      <NavLink
+        to="/analytics"
+        style={({ isActive }) => (isActive ? activeStyle : undefined)}
+      >
+        Analytics
+      </NavLink>
+      <Divider size={1} my={10} />
+      <NavLink
+        to="/profile"
+        style={({ isActive }) => (isActive ? activeStyle : undefined)}
+      >
+        Profile
+      </NavLink>
+      <Button color='red' mt="lg">Logout</Button>
     </Navbar>
   );
 };
