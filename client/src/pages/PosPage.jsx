@@ -41,6 +41,7 @@ const PosPage = () => {
   const html5QrCodeRef = useRef(null); // Reference for the barcode scanner
   const lastScannedRef = useRef(null); // To track the last scanned barcode
   const [barcode, setBarcode] = useState("");
+  const [scanner, setScanner] = useState(false);
   const scannerRef = useRef(null);
   const [payment, setPayment] = useState({
       netTotal: 0,
@@ -181,7 +182,7 @@ const PosPage = () => {
         <Col xs={12} md={8}>
           <Group position="apart" mb="md">
             <Title order={3}>Scanned Item</Title>
-            <Button onClick={() => setScannerModalOpened(true)}>Start Scan</Button>
+            <Button onClick={() => setScanner(!scanner)}>{scanner === true? 'Stop scanner' : 'Start scanner'}</Button>
           </Group>
           <Card shadow="sm" p="lg" style={{ textAlign: "center" }}>
             {/* {scannedItem ? (
@@ -200,11 +201,11 @@ const PosPage = () => {
             {barcode && <Text>{barcode}</Text>}
           </Card>
           
-          
+
           {/* Modal for Scanner */}
           <Container py="lg" >
             {/* <div id="reader" style={{margin: '0 auto', width: '30%'}} /> */}
-            <BarcodeScan /> 
+            {scanner && <BarcodeScan /> }
           </Container>
         </Col>
 
