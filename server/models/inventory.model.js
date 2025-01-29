@@ -2,11 +2,16 @@ const mongoose = require('mongoose');
 
 const inventorySchema = mongoose.Schema({
     product: {
-        type: String,
-        required: true, // Name of the product
+        type: mongoose.Schema.Types.ObjectId,
+            ref: 'Product', // Links each product to inventory
+            required: true,
     },
     quantity: {
         type: Number,
+        required: true,
+    },
+    expiryDate: {
+        type: Date,
         required: true,
     },
     unit: {
@@ -15,7 +20,7 @@ const inventorySchema = mongoose.Schema({
     },
     expiryDate: {
         type: Date,
-        // required: true,
+        required: true,
     },
     price: {
         type: Number,
@@ -25,11 +30,11 @@ const inventorySchema = mongoose.Schema({
         type: Number,
         required: true,
     },
-    // supplier: {
-    //     type: mongoose.Schema.Types.ObjectId,
-    //     ref: 'Supplier', // Links each product to its supplier
-    //     required: true,
-    // },
+    supplier: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Supplier', // Links each product to its supplier
+        required: true,
+    },
     shelf: {
         type: String, // Specifies where the product is stored
         // required: true,
@@ -40,6 +45,48 @@ const inventorySchema = mongoose.Schema({
     //     ref: 'Branch', // Links the inventory to a specific branch
     //     required: true,
     // },
-});
+}, {timestamps: true});
+
+// Example query
+
+/* const inventory = await Inventory.find()
+  .populate("product") // Fetch related product details
+  .populate("supplier") // Fetch related supplier details
+  .exec();
+
+console.log(inventory);
+*/
+
+// Result output
+
+/*
+
+[
+  {
+    "_id": "65f2c7...",
+    "product": {
+      "_id": "65f1b4...",
+      "name": "Paracetamol",
+      "barcode": "123456789",
+      "dosage": "500mg",
+      "manufacturer": "ABC Pharma",
+      "category": "Pain Relief",
+      "image": "paracetamol.jpg"
+    },
+    "supplier": {
+      "_id": "65f2d5...",
+      "name": "MedSupply Ltd",
+      "contact": "info@medsupply.com",
+      "address": "123 Street, City"
+    },
+    "quantity": 100,
+    "unit": "Box",
+    "expiryDate": "2025-12-31",
+    "dateAdded": "2024-01-29",
+    "shelf": "A3"
+  }
+]
+
+*/
 
 module.exports = mongoose.model('Inventory', inventorySchema);
