@@ -21,16 +21,16 @@ const AppNavbar = () => {
         Home
       </NavLink>
       <NavLink
+        to="/pos"
+        style={({ isActive }) => (isActive ? activeStyle : undefined)}
+      >
+        POS
+      </NavLink>
+      <NavLink
         to="/inventory"
         style={({ isActive }) => (isActive ? activeStyle : undefined)}
       >
         Inventory
-      </NavLink>
-      <NavLink
-        to="/sales"
-        style={({ isActive }) => (isActive ? activeStyle : undefined)}
-      >
-        Sales
       </NavLink>
       <NavLink
         to="/verify"

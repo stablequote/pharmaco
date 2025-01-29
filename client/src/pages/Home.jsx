@@ -9,7 +9,7 @@ const Home = () => {
       <Text fw="bold" fz="xl" mb="md">Quick Access</Text>
         <Flex justify="space-between" sx={{width: 320}}>
           <Box>
-            <Button component={NavLink} to="/sales">POS</Button>
+            <Button component={NavLink} to="/pos">POS</Button>
           </Box>
           <Box>
             <Button component={NavLink} to="/inventory">Inventory</Button>
