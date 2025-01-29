@@ -183,7 +183,7 @@ const PosPage = () => {
             <Button onClick={() => setScannerModalOpened(true)}>Start Scan</Button>
           </Group>
           <Card shadow="sm" p="lg" style={{ textAlign: "center" }}>
-            {scannedItem ? (
+            {/* {scannedItem ? (
               <>
                 <Text size="lg" weight={700}>
                   {scannedItem.name}
@@ -194,7 +194,9 @@ const PosPage = () => {
               </>
             ) : (
               <Text>No item scanned yet</Text>
-            )}
+            )} */}
+
+            {barcode && <Text>{barcode}</Text>}
           </Card>
           
           {/* Modal for Scanner */}
