@@ -6,33 +6,29 @@ const orderSchema = mongoose.Schema({
         unique: true,
         required: true,
     },
-    orderDate: {
-        type: Date,
-        default: Date.now,
+    product: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Product', // Links the order to a product in inventory
+        required: true,
     },
     quantity: {
         type: Number,
         required: true,
     },
-    totalPrice: {
-        type: Number,
-        required: true,
-    },
-    manufacturer: {
+    unit: {
         type: String,
         required: true,
     },
-    supplier: {
+    supplier: { 
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Supplier', // Relates to the Supplier Schema
+        ref: 'Supplier',
+        required: true
+    }, // Supplier per order
+    unitPurchasePrice: {
+        type: Number,
         required: true,
     },
-    product: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Inventory', // Links the order to a product in inventory
-        required: true,
-    },
-    unitPrice: {
+    totalOrderPrice: {
         type: Number,
         required: true,
     },
@@ -50,6 +46,6 @@ const orderSchema = mongoose.Schema({
         ref: 'Branch', // Links the order to a specific branch
         required: true,
     },
-});
+}, {timestamps: true});
 
 module.exports = mongoose.model('Order', orderSchema);

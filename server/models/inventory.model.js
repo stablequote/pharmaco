@@ -3,15 +3,11 @@ const mongoose = require('mongoose');
 const inventorySchema = mongoose.Schema({
     product: {
         type: mongoose.Schema.Types.ObjectId,
-            ref: 'Product', // Links each product to inventory
-            required: true,
+        ref: 'Product', // Links each product to inventory
+        required: true,
     },
     quantity: {
         type: Number,
-        required: true,
-    },
-    expiryDate: {
-        type: Date,
         required: true,
     },
     unit: {
@@ -22,11 +18,11 @@ const inventorySchema = mongoose.Schema({
         type: Date,
         required: true,
     },
-    price: {
+    unitPurchasePrice: {
         type: Number,
         required: true,
     },
-    salePrice: {
+    unitSalePrice: {
         type: Number,
         required: true,
     },
