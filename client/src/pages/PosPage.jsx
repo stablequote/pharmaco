@@ -22,6 +22,7 @@ import {
 import { showNotification } from "@mantine/notifications";
 import CartOverview from "../components/CartOverview";
 import CartPaymentSection from "../components/CartPaymentSection";
+import BarcodeScan from "../components/BarcodeScan";
 
 // Sample product database
 const products = [
@@ -199,9 +200,11 @@ const PosPage = () => {
             {barcode && <Text>{barcode}</Text>}
           </Card>
           
+          
           {/* Modal for Scanner */}
           <Container py="lg" >
-            <div id="reader" style={{margin: '0 auto', width: '30%'}} />
+            {/* <div id="reader" style={{margin: '0 auto', width: '30%'}} /> */}
+            <BarcodeScan /> 
           </Container>
         </Col>
 
