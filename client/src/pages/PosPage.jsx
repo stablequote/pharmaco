@@ -13,27 +13,38 @@ import {
   Grid,
   Col,
   Box,
+  Divider,
+  NumberInput,
+  Select,
 } from "@mantine/core";
 import { showNotification } from "@mantine/notifications";
 
 // Sample product database
 const products = [
-  { id: "1234", name: "Paracetamol 500mg", price: 50 },
-  { id: "5678", name: "Ibuprofen 200mg", price: 100 },
-  { id: "9101", name: "Vitamin C 100mg", price: 30 },
-  { id: "1123", name: "Cough Syrup 100ml", price: 80 },
-  { id: "3456", name: "Antacid Tablets", price: 60 },
+  { id: "1234", name: "Paracetamol 500mg",  quantity: 1, price: 50 },
+  { id: "5678", name: "Ibuprofen 200mg", quantity: 1, price: 100 },
+  // { id: "9101", name: "Vitamin C 100mg",  quantity: 3,price: 30 },
+  // { id: "1123", name: "Cough Syrup 100ml",  quantity: 1,price: 80 },
+  // { id: "3456", name: "Antacid Tablets", quantity: 6, price: 60 },
 ];
 
 const PosPage = () => {
   const [scannedItem, setScannedItem] = useState(null); // Currently scanned item
-  const [cart, setCart] = useState([]); // Cart items
+  const [cart, setCart] = useState(products); // Cart items
   const [scannerModalOpened, setScannerModalOpened] = useState(false); // Scanner modal state
   const [receiptVisible, setReceiptVisible] = useState(false); // Receipt modal visibility
   const html5QrCodeRef = useRef(null); // Reference for the barcode scanner
   const lastScannedRef = useRef(null); // To track the last scanned barcode
   const [barcode, setBarcode] = useState("");
   const scannerRef = useRef(null);
+  const [payment, setPayment] = useState({
+      netTotal: 0,
+      discount: 0,
+      previous: 0,
+      paidAmount: 0,
+      dueAmount: 0,
+      paymentType: "Cash",
+    });
 
   useEffect(() => {
     if (scannerModalOpened) {
@@ -130,8 +141,22 @@ const PosPage = () => {
     });
   };
 
-  const calculateTotal = () =>
-    cart.reduce((total, item) => total + item.price * item.quantity, 0);
+  const calculateNetTotal = () => {
+    return cart.reduce((total, item) => total + item.quantity * item.price, 0);
+  };
+
+  const updateQuantity = (id, action) => {
+    setCart((prev) =>
+      prev.map((item) =>
+        item.id === id
+          ? {
+              ...item,
+              quantity: action === "increment" ? item.quantity + 1 : item.quantity - 1,
+            }
+          : item
+      ).filter((item) => item.quantity > 0)
+    );
+  };
 
   const finishTransaction = () => {
     stopScanner();
@@ -171,31 +196,108 @@ const PosPage = () => {
 
         {/* Right Side: Cart Overview */}
         <Col xs={12} md={4}>
-          <Title order={3}>Cart Overview</Title>
-          <Table highlightOnHover>
-            <thead>
-              <tr>
-                <th>Product</th>
-                <th>Qty</th>
-                <th>Price</th>
-              </tr>
-            </thead>
-            <tbody>
-              {cart.map((item) => (
-                <tr key={item.id}>
-                  <td>{item.name}</td>
-                  <td>{item.quantity}</td>
-                  <td>${item.price * item.quantity}</td>
-                </tr>
-              ))}
-            </tbody>
-          </Table>
-          <Text mt="md" weight={700}>
-            Total: ${calculateTotal()}
-          </Text>
-          <Button mt="md" fullWidth onClick={finishTransaction}>
-            Pay
-          </Button>
+             {/* Overview Section */}
+                <Paper shadow="xs" p="md" mb="md" radius="lg">
+                  <Group position="apart">
+                    <Text weight={500} size="lg">
+                      Overview
+                    </Text>
+                  </Group>
+                  <Divider my="sm" />
+          
+                  <Grid mb="md">
+                    <Grid.Col span={6}>
+                      <Text weight={500} size="sm">
+                        Medicine Name
+                      </Text>
+                    </Grid.Col>
+                    <Grid.Col span={3}>
+                      <Text weight={500} size="sm">
+                        Quantity
+                      </Text>
+                    </Grid.Col>
+                    <Grid.Col span={3}>
+                      <Text weight={500} size="sm">
+                        Total Price
+                      </Text>
+                    </Grid.Col>
+                  </Grid>
+                  {cart.map((item) => (
+                    <Group key={item.id}  mb="sm" >
+                      <Grid sx={{width: '100% !important'}}>
+                        <Grid.Col span={5}>
+                          <Text>{item.name}</Text>
+                        </Grid.Col>
+                        <Grid.Col span={5}>
+                          <Group spacing="xs">
+                            <Button
+                              compact
+                              size="xs"
+                              onClick={() => updateQuantity(item.id, "increment")}
+                            >
+                              +
+                            </Button>
+                            <NumberInput
+                              value={item.quantity}
+                              size="xs"
+                              readOnly
+                              hideControls
+                              style={{ width: "50px" }}
+                            />
+                            <Button
+                              compact
+                              size="xs"
+                              onClick={() => updateQuantity(item.id, "decrement")}
+                            >
+                              -
+                            </Button>
+                          </Group>
+                        </Grid.Col>
+                        <Grid.Col span={2}>
+                          <Text>${(item.quantity * item.price).toFixed(2)}</Text>
+                        </Grid.Col>
+                      </Grid>
+                    </Group>
+                  ))}
+                </Paper>
+          
+                {/* Payment Section */}
+                <Paper shadow="xs" p="md" radius="lg">
+                  <Text weight={500} size="lg" mb="sm">
+                    Payment
+                  </Text>
+                  <Divider my="sm" />
+          
+                  <Group position="apart" mb="xs">
+                    <Text>Net Total</Text>
+                    <Text>${calculateNetTotal().toFixed(2)}</Text>
+                  </Group>
+                  <Group position="apart" mb="xs">
+                    <Text>Paid Amount</Text>
+                    <Text>{payment.paidAmount.toFixed(2)}</Text>
+                  </Group>
+                  <Group position="apart" mb="xs">
+                    <Text>Due Amount</Text>
+                    <Text>{payment.dueAmount.toFixed(2)}</Text>
+                  </Group>
+          
+                  <Select
+                    label="Payment Type"
+                    value={payment.paymentType}
+                    defaultValue="Cash"
+                    onChange={(value) =>
+                      setPayment((prev) => ({ ...prev, paymentType: value }))
+                    }
+                    data={["Cash", "Bankak", "Fawry"]}
+                    mb="md"
+                  />
+                  <Group position="apart">
+                    <Button variant="light" color="gray">
+                      Reset
+                    </Button>
+                    <Button color="green" onClick={() => setReceiptVisible(!receiptVisible)}>Pay</Button>
+                  </Group>
+                </Paper>
         </Col>
       </Grid>
 
@@ -234,7 +336,7 @@ const PosPage = () => {
             </tbody>
           </Table>
           <Text mt="md" weight={700}>
-            Total Amount Paid: ${calculateTotal()}
+            Total Amount Paid: ${calculateNetTotal()}
           </Text>
         </Paper>
         <Button mt="md" fullWidth onClick={resetProcess}>
