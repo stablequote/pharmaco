@@ -193,7 +193,15 @@ const DataGrid = () => {
     ),
   });
 
-  return <MantineReactTable table={table} />;
-};
+  return <MantineReactTable 
+          table={table}
+          positionGlobalFilter="right"
+          mantineSearchTextInputProps={{
+            placeholder: `Search ${data.length} rows`,
+            sx: { minWidth: '300px' },
+            variant: 'filled',
+          }}
+        />;
+      };
 
 export default DataGrid;
