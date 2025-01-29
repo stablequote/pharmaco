@@ -16,8 +16,12 @@ import {
   Divider,
   NumberInput,
   Select,
+  Center,
+  Container,
 } from "@mantine/core";
 import { showNotification } from "@mantine/notifications";
+import CartOverview from "../components/CartOverview";
+import CartPaymentSection from "../components/CartPaymentSection";
 
 // Sample product database
 const products = [
@@ -170,7 +174,7 @@ const PosPage = () => {
   };
 
   return (
-    <div style={{ padding: "20px" }}>
+    <div style={{ padding: "20px", overflow: "hidden !important" }}>
       <Grid gutter="lg">
         {/* Left Side: Scanned Item */}
         <Col xs={12} md={8}>
@@ -192,121 +196,32 @@ const PosPage = () => {
               <Text>No item scanned yet</Text>
             )}
           </Card>
+          
+          {/* Modal for Scanner */}
+          <Container py="lg" >
+            <div id="reader" style={{margin: '0 auto', width: '30%'}} />
+          </Container>
         </Col>
 
         {/* Right Side: Cart Overview */}
         <Col xs={12} md={4}>
-             {/* Overview Section */}
-                <Paper shadow="xs" p="md" mb="md" radius="lg">
-                  <Group position="apart">
-                    <Text weight={500} size="lg">
-                      Overview
-                    </Text>
-                  </Group>
-                  <Divider my="sm" />
-          
-                  <Grid mb="md">
-                    <Grid.Col span={6}>
-                      <Text weight={500} size="sm">
-                        Medicine Name
-                      </Text>
-                    </Grid.Col>
-                    <Grid.Col span={3}>
-                      <Text weight={500} size="sm">
-                        Quantity
-                      </Text>
-                    </Grid.Col>
-                    <Grid.Col span={3}>
-                      <Text weight={500} size="sm">
-                        Total Price
-                      </Text>
-                    </Grid.Col>
-                  </Grid>
-                  {cart.map((item) => (
-                    <Group key={item.id}  mb="sm" >
-                      <Grid sx={{width: '100% !important'}}>
-                        <Grid.Col span={5}>
-                          <Text>{item.name}</Text>
-                        </Grid.Col>
-                        <Grid.Col span={5}>
-                          <Group spacing="xs">
-                            <Button
-                              compact
-                              size="xs"
-                              onClick={() => updateQuantity(item.id, "increment")}
-                            >
-                              +
-                            </Button>
-                            <NumberInput
-                              value={item.quantity}
-                              size="xs"
-                              readOnly
-                              hideControls
-                              style={{ width: "50px" }}
-                            />
-                            <Button
-                              compact
-                              size="xs"
-                              onClick={() => updateQuantity(item.id, "decrement")}
-                            >
-                              -
-                            </Button>
-                          </Group>
-                        </Grid.Col>
-                        <Grid.Col span={2}>
-                          <Text>${(item.quantity * item.price).toFixed(2)}</Text>
-                        </Grid.Col>
-                      </Grid>
-                    </Group>
-                  ))}
-                </Paper>
-          
-                {/* Payment Section */}
-                <Paper shadow="xs" p="md" radius="lg">
-                  <Text weight={500} size="lg" mb="sm">
-                    Payment
-                  </Text>
-                  <Divider my="sm" />
-          
-                  <Group position="apart" mb="xs">
-                    <Text>Net Total</Text>
-                    <Text>${calculateNetTotal().toFixed(2)}</Text>
-                  </Group>
-                  <Group position="apart" mb="xs">
-                    <Text>Paid Amount</Text>
-                    <Text>{payment.paidAmount.toFixed(2)}</Text>
-                  </Group>
-                  <Group position="apart" mb="xs">
-                    <Text>Due Amount</Text>
-                    <Text>{payment.dueAmount.toFixed(2)}</Text>
-                  </Group>
-          
-                  <Select
-                    label="Payment Type"
-                    value={payment.paymentType}
-                    defaultValue="Cash"
-                    onChange={(value) =>
-                      setPayment((prev) => ({ ...prev, paymentType: value }))
-                    }
-                    data={["Cash", "Bankak", "Fawry"]}
-                    mb="md"
-                  />
-                  <Group position="apart">
-                    <Button variant="light" color="gray">
-                      Reset
-                    </Button>
-                    <Button color="green" onClick={() => setReceiptVisible(!receiptVisible)}>Pay</Button>
-                  </Group>
-                </Paper>
+            {/* Overview Section */}
+            <CartOverview 
+              cart={cart}
+              updateQuantity={updateQuantity}
+            />
+      
+            {/* Payment Section */}
+            <CartPaymentSection
+              calculateNetTotal={calculateNetTotal}
+              payment={payment}
+              setPayment={setPayment}
+              setReceiptVisible={setReceiptVisible}
+              receiptVisible={receiptVisible}
+            />
         </Col>
       </Grid>
 
-      {/* Modal for Scanner */}
-      
-      <Box sx={{width: 300, height: 300}}>
-
-        <div id="reader" style={{ width: "100%" }} />
-      </Box>
 
       {/* Modal for Receipt */}
       <Modal
