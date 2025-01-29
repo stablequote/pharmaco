@@ -14,7 +14,7 @@ function DashboardWrapper() {
         <Header height={60} p="xs" sx={{backgroundColor: '#1D242E'}}>
           <Flex>
             <Burger color='white' mr="lg" onClick={open} />
-          <Text color='white' fw="bold" fz="lg">Pharmacia</Text>
+          <Text color='white' fw="bold" fz="lg">Pharmaco</Text>
           </Flex>
         </Header>
       }
