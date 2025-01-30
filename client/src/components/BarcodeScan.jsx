@@ -1,7 +1,7 @@
 import { Scanner, useDevices, centerText, boundingBox, outline } from '@yudiel/react-qr-scanner';
 import { useState } from 'react';
 
-const BarcodeScan = () => {
+const BarcodeScan = ({ barcode, handleBarcode }) => {
     const [tracker, setTracker] = useState('centerText'); // tracker is now a string, not an array
     const [pause, setPause] = useState(false);
     const [deviceId, setDeviceId] = useState(undefined); // define deviceId state
@@ -55,7 +55,8 @@ const BarcodeScan = () => {
                 <Scanner
                     onScan={(detectedCodes) => {
                         // Implement the desired onScan functionality here
-                        console.log(detectedCodes);
+                        console.log(detectedCodes[0].rawValue);
+                        handleBarcode(detectedCodes[0].rawValue)
                     }}
                     formats={[
                         'qr_code',
