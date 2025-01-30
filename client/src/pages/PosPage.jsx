@@ -19,14 +19,17 @@ import {
   Center,
   Container,
 } from "@mantine/core";
+import { useMediaQuery } from '@mantine/hooks';
 import { showNotification } from "@mantine/notifications";
 import CartOverview from "../components/CartOverview";
 import CartPaymentSection from "../components/CartPaymentSection";
 import BarcodeScan from "../components/BarcodeScan";
 
+// const isMobile = useMediaQuery('(max-width: 375px)');
+
 // Sample product database
 const products = [
-  { id: "1234", name: "Paracetamol 500mg",  quantity: 1, price: 50 },
+  { id: "1234", name: "Paracetamol 500mg",  quantity: 1, price: 50, barcode: "6251065033005" },
   { id: "5678", name: "Ibuprofen 200mg", quantity: 1, price: 100 },
   // { id: "9101", name: "Vitamin C 100mg",  quantity: 3,price: 30 },
   // { id: "1123", name: "Cough Syrup 100ml",  quantity: 1,price: 80 },
@@ -40,7 +43,7 @@ const PosPage = () => {
   const [receiptVisible, setReceiptVisible] = useState(false); // Receipt modal visibility
   const html5QrCodeRef = useRef(null); // Reference for the barcode scanner
   const lastScannedRef = useRef(null); // To track the last scanned barcode
-  const [barcode, setBarcode] = useState("");
+  const [barcode, setBarcode] = useState([]);
   const [scanner, setScanner] = useState(false);
   const scannerRef = useRef(null);
   const [payment, setPayment] = useState({
@@ -175,6 +178,10 @@ const PosPage = () => {
     setReceiptVisible(false);
   };
 
+  const handleBarcode = (data) => {
+    setBarcode(data)
+  }
+
   return (
     <div style={{ padding: "20px", overflow: "hidden !important" }}>
       <Grid gutter="lg">
@@ -205,7 +212,7 @@ const PosPage = () => {
           {/* Modal for Scanner */}
           <Container py="lg" >
             {/* <div id="reader" style={{margin: '0 auto', width: '30%'}} /> */}
-            {scanner && <BarcodeScan /> }
+            {scanner && <BarcodeScan barcode={barcode} handleBarcode={handleBarcode} /> }
           </Container>
         </Col>
 
