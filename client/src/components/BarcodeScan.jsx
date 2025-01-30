@@ -89,6 +89,7 @@ const BarcodeScan = () => {
                         tracker: getTracker(),
                     }}
                     deviceId={deviceId} // Use deviceId here
+                    scanDelay={1500}
                 />
             </div>
         </>
