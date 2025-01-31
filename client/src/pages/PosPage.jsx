@@ -200,7 +200,6 @@ const PosPage = () => {
                 : item
             );
           }
-          console.log(item)
           console.log(cart)
           return [...prevCart, { ...product, quantity: 1 }];
         });
@@ -221,7 +220,13 @@ const PosPage = () => {
       console.error("Error fetching product:", error);
     }
   };
-  
+
+  const resetCart = async () => {
+    console.log(cart)
+    setCart([])
+    console.log(cart)
+  }
+
 
   return (
     <div style={{ padding: "20px", overflow: "hidden !important" }}>
@@ -272,6 +277,7 @@ const PosPage = () => {
               setPayment={setPayment}
               setReceiptVisible={setReceiptVisible}
               receiptVisible={receiptVisible}
+              resetCart={resetCart}
             />
         </Col>
       </Grid>

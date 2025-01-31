@@ -1,6 +1,6 @@
 import { Paper, Group, Text, Divider, Button, Select } from '@mantine/core'
 
-    function CartPaymentSection({ calculateNetTotal, payment, setPayment, setReceiptVisible, receiptVisible,  }) {
+    function CartPaymentSection({ calculateNetTotal, payment, setPayment, setReceiptVisible, receiptVisible, resetCart }) {
   return (
         <Paper shadow="xs" p="md" radius="lg">
             <Text weight={500} size="lg" mb="sm">
@@ -32,10 +32,8 @@ import { Paper, Group, Text, Divider, Button, Select } from '@mantine/core'
             mb="md"
             />
             <Group position="apart">
-            <Button variant="light" color="gray">
-                Reset
-            </Button>
-            <Button color="green" onClick={() => setReceiptVisible(!receiptVisible)}>Pay</Button>
+            <Button variant="outline" color="red" onClick={() => resetCart()}>Reset</Button>
+            <Button color="green" onClick={() => setReceiptVisible(!receiptVisible)}>Confirm</Button>
             </Group>
         </Paper>
     )}
