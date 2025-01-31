@@ -2,9 +2,10 @@ const mongoose = require('mongoose');
 
 const inventorySchema = mongoose.Schema({
     product: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Product', // Links each product to inventory
+        // type: mongoose.Schema.Types.ObjectId,
+        // ref: 'Product', // Links each product to inventory
         required: true,
+        type: String,
     },
     quantity: {
         type: Number,
@@ -26,16 +27,21 @@ const inventorySchema = mongoose.Schema({
         type: Number,
         required: true,
     },
-    supplier: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Supplier', // Links each product to its supplier
-        required: true,
-    },
+    // supplier: {
+    //     type: mongoose.Schema.Types.ObjectId,
+    //     ref: 'Supplier', // Links each product to its supplier
+    //     // required: true,
+    // },
     shelf: {
         type: String, // Specifies where the product is stored
         // required: true,
         
     },
+    barcodeID: {
+      type: String,
+      required: true,
+      unique: true,
+    }
     // branch: {
     //     type: mongoose.Schema.Types.ObjectId,
     //     ref: 'Branch', // Links the inventory to a specific branch
