@@ -1,6 +1,6 @@
 import { Paper, Group, Text, Divider, Button, Select } from '@mantine/core'
 
-    function CartPaymentSection({ calculateNetTotal, payment, setPayment, setReceiptVisible, receiptVisible, resetCart }) {
+function CartPaymentSection({ calculateNetTotal, payment, setPayment, setReceiptVisible, receiptVisible, resetCart }) {
   return (
         <Paper shadow="xs" p="md" radius="lg">
             <Text weight={500} size="lg" mb="sm">
