@@ -154,4 +154,4 @@ exports.addOrderToInventory = async (req, res) => {
 
 
 // Example usage
-addOrderToInventory("65f1b9e89f6e3a001f8b5678"); // Replace with actual order ID
+// addOrderToInventory("65f1b9e89f6e3a001f8b5678"); // Replace with actual order ID
