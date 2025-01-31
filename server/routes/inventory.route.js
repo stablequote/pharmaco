@@ -5,7 +5,7 @@ const inventoryController = require('../controllers/inventory.controller');
 // Authentication routes
 router.post('/add', inventoryController.addProduct);
 router.get('/list-all', inventoryController.listAllProducts);
-router.get('/list/:id', inventoryController.searchByBarcode);
+router.get('/search/:barcodeID', inventoryController.searchByBarcode);
 router.put('update/:id', inventoryController.updateProduct);
 router.delete('delete/:id', inventoryController.deleteSingleProduct);
 router.delete('/delete/multiple/', inventoryController.deleteMultipleProducts);

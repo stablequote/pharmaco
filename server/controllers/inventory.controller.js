@@ -4,18 +4,19 @@ const Barcode = require('barcode-generator'); // For barcode generation
 // Add a product
 exports.addProduct = async (req, res) => {
     try {
-        const { product, quantity, unit, expiryDate, price, salePrice, supplier, shelf, branch } = req.body;
+        const { product, quantity, unit, expiryDate, unitPurchasePrice, unitSalePrice, supplier, shelf, branch, barcodeID } = req.body;
 
         const newProduct = new Inventory({
             product,
             quantity,
             unit,
             expiryDate,
-            price,
-            salePrice,
+            unitPurchasePrice,
+            unitSalePrice,
             supplier,
             shelf,
             branch,
+            barcodeID,
         });
 
         await newProduct.save();
@@ -40,13 +41,15 @@ exports.listAllProducts = async (req, res) => {
 exports.searchByBarcode = async (req, res) => {
     try {
         const { barcodeID } = req.params;
+        console.log(barcodeID)
 
-        const product = await Inventory.findOne({ barcodeID });
-        if (!product) return res.status(404).json({ message: 'Product not found.' });
+        const productItem = await Inventory.findOne({ barcodeID: barcodeID });
+        if (!productItem) return res.status(404).json({ message: 'Product not found.' });
 
-        res.status(200).json(product);
+        res.status(200).json(productItem);
     } catch (error) {
         res.status(500).json({ error: 'Failed to search product.' });
+        console.log(error)
     }
 };
 
