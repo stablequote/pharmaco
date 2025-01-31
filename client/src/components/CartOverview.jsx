@@ -27,39 +27,28 @@ function CartOverview({ cart, updateQuantity }) {
                 </Text>
             </Grid.Col>
             </Grid>
-            {cart.map((item) => (
-            <Group key={item.id}  mb="sm" >
+            {cart.map((item, i) => (
+            <Group key={item._id}  mb="sm" >
                 <Grid sx={{width: '100% !important'}}>
                 <Grid.Col span={5}>
-                    <Text>{item.name}</Text>
+                    <Text>{item.product}</Text>
                 </Grid.Col>
                 <Grid.Col span={5}>
                     <Group spacing="xs">
-                    <Button
-                        compact
-                        size="xs"
-                        onClick={() => updateQuantity(item.id, "increment")}
-                    >
-                        +
-                    </Button>
+                    <Button compact size="xs" onClick={() => updateQuantity(item._id, "increment")}>+</Button>
                     <NumberInput
                         value={item.quantity}
                         size="xs"
-                        readOnly
+                        // readOnly
                         hideControls
                         style={{ width: "50px" }}
+                        // onChange={(event) => }
                     />
-                    <Button
-                        compact
-                        size="xs"
-                        onClick={() => updateQuantity(item.id, "decrement")}
-                    >
-                        -
-                    </Button>
+                    <Button compact size="xs" onClick={() => updateQuantity(item._id, "decrement")}>-</Button>
                     </Group>
                 </Grid.Col>
                 <Grid.Col span={2}>
-                    <Text>${(item.quantity * item.price).toFixed(2)}</Text>
+                    <Text>${(item.unitSalePrice).toFixed(2)}</Text>
                 </Grid.Col>
                 </Grid>
             </Group>

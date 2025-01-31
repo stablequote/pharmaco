@@ -24,21 +24,22 @@ import { showNotification } from "@mantine/notifications";
 import CartOverview from "../components/CartOverview";
 import CartPaymentSection from "../components/CartPaymentSection";
 import BarcodeScan from "../components/BarcodeScan";
+import axios from 'axios'
 
 // const isMobile = useMediaQuery('(max-width: 375px)');
 
 // Sample product database
 const products = [
-  { id: "1234", name: "Paracetamol 500mg",  quantity: 1, price: 50, barcode: "6251065033005" },
-  { id: "5678", name: "Ibuprofen 200mg", quantity: 1, price: 100 },
-  // { id: "9101", name: "Vitamin C 100mg",  quantity: 3,price: 30 },
-  // { id: "1123", name: "Cough Syrup 100ml",  quantity: 1,price: 80 },
-  // { id: "3456", name: "Antacid Tablets", quantity: 6, price: 60 },
+  { _id: "1234", product: "Paracetamol 500mg",  quantity: 1, unitSalePrice: 50, barcodeID: "6251065033005" },
+  { _id: "5678", product: "Ibuprofen 200mg", quantity: 1, unitSalePrice: 100, barcodeID: "" },
+  { _id: "9101", product: "Vitamin C 100mg",  quantity: 3,unitSalePrice: 30, barcodeID: "" },
+  { _id: "1123", product: "Cough Syrup 100ml",  quantity: 1,unitSalePrice: 80, barcodeID: "" },
+  { _id: "3456", product: "Antacid Tablets", quantity: 6, unitSalePrice: 60, barcodeID: "" },
 ];
 
 const PosPage = () => {
   const [scannedItem, setScannedItem] = useState(null); // Currently scanned item
-  const [cart, setCart] = useState(products); // Cart items
+  const [cart, setCart] = useState([]); // Cart items
   const [scannerModalOpened, setScannerModalOpened] = useState(false); // Scanner modal state
   const [receiptVisible, setReceiptVisible] = useState(false); // Receipt modal visibility
   const html5QrCodeRef = useRef(null); // Reference for the barcode scanner
@@ -151,13 +152,13 @@ const PosPage = () => {
   };
 
   const calculateNetTotal = () => {
-    return cart.reduce((total, item) => total + item.quantity * item.price, 0);
+    return cart.reduce((total, item) => total + item.quantity * item.unitSalePrice, 0);
   };
-
+  
   const updateQuantity = (id, action) => {
     setCart((prev) =>
       prev.map((item) =>
-        item.id === id
+        item._id === id
           ? {
               ...item,
               quantity: action === "increment" ? item.quantity + 1 : item.quantity - 1,
@@ -165,6 +166,7 @@ const PosPage = () => {
           : item
       ).filter((item) => item.quantity > 0)
     );
+    console.log(id)
   };
 
   const finishTransaction = () => {
@@ -178,9 +180,48 @@ const PosPage = () => {
     setReceiptVisible(false);
   };
 
-  const handleBarcode = (data) => {
-    setBarcode(data)
-  }
+  const handleBarcode = async (data) => {
+    setBarcode(data);
+  
+    try {
+
+      const baseUrl = 'http://localhost:5005/inventory/search';
+      const response = await axios.get(`${baseUrl}/${data}`);
+      console.log(response)
+  
+      if (response.status === 200) {
+        const product = response.data;
+        setCart((prevCart) => {
+          const existingProduct = prevCart.find((item) => item.barcodeID === product.barcodeID);
+          if (existingProduct) {
+            return prevCart.map((item) =>
+              item.barcodeID === product.barcodeID
+                ? { ...item, quantity: item.quantity + 1 }
+                : item
+            );
+          }
+          console.log(item)
+          console.log(cart)
+          return [...prevCart, { ...product, quantity: 1 }];
+        });
+  
+        showNotification({
+          title: "Item Added",
+          message: `${product.product} was added to the cart.`,
+          color: "green",
+        });
+      } else {
+        showNotification({
+          title: "Product Not Found",
+          message: "No product found for this barcode.",
+          color: "red",
+        });
+      }
+    } catch (error) {
+      console.error("Error fetching product:", error);
+    }
+  };
+  
 
   return (
     <div style={{ padding: "20px", overflow: "hidden !important" }}>
@@ -239,7 +280,7 @@ const PosPage = () => {
       {/* Modal for Receipt */}
       <Modal
         opened={receiptVisible}
-        onClose={resetProcess}
+        onClose={() => setReceiptVisible(!receiptVisible)}
         title="Receipt"
         centered
       >
@@ -254,11 +295,11 @@ const PosPage = () => {
               </tr>
             </thead>
             <tbody>
-              {cart.map((item) => (
-                <tr key={item.id}>
-                  <td>{item.name}</td>
+              {cart.map((item, i) => (
+                <tr key={i}>
+                  <td>{item.product}</td>
                   <td>{item.quantity}</td>
-                  <td>${item.price * item.quantity}</td>
+                  <td>${item.unitSalePrice * item.quantity}</td>
                 </tr>
               ))}
             </tbody>
