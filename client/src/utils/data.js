@@ -159,3 +159,21 @@ export const data = [
     shelf: "O6",
   },
 ];
+
+export const productsData = [
+  { id: "1234", name: "Paracetamol 500mg", quantity: 1, price: 50, barcode: "6251065033005" },
+  { id: "5678", name: "Ibuprofen 200mg", quantity: 1, price: 100, barcode: "6251065033006" },
+  { id: "9101", name: "Vitamin C 100mg", quantity: 3, price: 30, barcode: "6251065033007" },
+  { id: "1123", name: "Cough Syrup 100ml", quantity: 1, price: 80, barcode: "6251065033008" },
+  { id: "3456", name: "Antacid Tablets", quantity: 6, price: 60, barcode: "6251065033009" },
+  { id: "7890", name: "Aspirin 100mg", quantity: 2, price: 70, barcode: "6251065033010" },
+  { id: "1122", name: "Cold & Flu Tablets", quantity: 4, price: 110, barcode: "6251065033011" },
+  { id: "2233", name: "Vitamin D 1000IU", quantity: 5, price: 40, barcode: "6251065033012" },
+  { id: "3344", name: "Allergy Tablets", quantity: 3, price: 120, barcode: "6251065033013" },
+  { id: "4455", name: "Multivitamins 60ct", quantity: 2, price: 90, barcode: "6251065033014" },
+  { id: "5566", name: "Pain Relief Cream", quantity: 1, price: 150, barcode: "6251065033015" },
+  { id: "6677", name: "Antiseptic Cream", quantity: 1, price: 80, barcode: "6251065033016" },
+  { id: "7788", name: "Cough Lozenges", quantity: 4, price: 35, barcode: "6251065033017" },
+  { id: "8899", name: "Sleep Aid 10mg", quantity: 2, price: 60, barcode: "6251065033018" },
+  { id: "9900", name: "Digestive Enzymes", quantity: 3, price: 55, barcode: "6251065033019" }
+];
