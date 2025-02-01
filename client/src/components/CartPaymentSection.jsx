@@ -1,6 +1,31 @@
 import { Paper, Group, Text, Divider, Button, Select } from '@mantine/core'
+import { notifications } from '@mantine/notifications'
 
 function CartPaymentSection({ calculateNetTotal, payment, setPayment, setReceiptVisible, receiptVisible, resetCart }) {
+
+    const makePayment = async () => {
+        setReceiptVisible(!receiptVisible)
+        notifications.show({
+            title: 'Success',
+            message: 'Product has been successfully paid! 🤥',
+            styles: (theme) => ({
+                root: {
+                  backgroundColor: theme.colors.green[6],
+                //   borderColor: theme.colors.
+  
+                  '&::before': { backgroundColor: theme.white },
+                },
+  
+                title: { color: theme.white },
+                description: { color: theme.white },
+                closeButton: {
+                  color: theme.white,
+                  '&:hover': { backgroundColor: theme.colors.blue[7] },
+                },
+              }),
+        })
+    }
+    
   return (
         <Paper shadow="xs" p="md" radius="lg">
             <Text weight={500} size="lg" mb="sm">
@@ -33,7 +58,7 @@ function CartPaymentSection({ calculateNetTotal, payment, setPayment, setReceipt
             />
             <Group position="apart">
             <Button variant="outline" color="red" onClick={() => resetCart()}>Reset</Button>
-            <Button color="green" onClick={() => setReceiptVisible(!receiptVisible)}>Confirm</Button>
+            <Button color="green" onClick={() => makePayment()}>Confirm</Button>
             </Group>
         </Paper>
     )}

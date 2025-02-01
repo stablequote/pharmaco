@@ -2,16 +2,20 @@ import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { Button, Divider, Navbar } from '@mantine/core';
 import { IconHome } from '@tabler/icons-react';
+import { useMediaQuery } from '@mantine/hooks';
 
 const AppNavbar = () => {
+
   const activeStyle = {
     backgroundColor: '#009099', // Light background for the active link
     fontWeight: 'bold',        // Highlight the text
     borderRadius: '4px',       // Rounded edges for better UI
   };
 
+  const isMobile = useMediaQuery('(max-width: 375px)');
+
   return (
-    <Navbar width={{ base: 250 }} p="xs" sx={{background: '#1D242E'}}>
+    <Navbar width={ !isMobile ? { base: 250 } : 100} p="xs" sx={{background: '#1D242E'}}>
       <NavLink
         to="/"
         style={({ isActive }) => (isActive ? activeStyle : undefined)}
