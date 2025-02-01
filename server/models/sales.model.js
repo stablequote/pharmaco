@@ -1,54 +1,61 @@
 const mongoose = require('mongoose');
 
 const salesSchema = mongoose.Schema({
-    product: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Inventory', // Links the sale to a product in inventory
-        required: true,
+    name: {
+        // type: mongoose.Schema.Types.ObjectId,
+        // ref: 'Inventory', // Links the sale to a product in inventory
+        type: String,
+        // required: true,
     },
-    dateTime: {
+    date: {
         type: Date,
         default: Date.now,
     },
     modeOfPayment: {
         type: String,
-        enum: ['cash', 'mobile', 'credit'], // Example payment methods
-        required: true,
+        enum: ['cash', 'bankak', 'fawry'], // Example payment methods
+        // required: true,
+    },
+    unitSalePrice: {
+        type: Number,
+        // required: true,
+    },
+    unitPurchasePrice: {
+        type: Number,
+        // required: true,
     },
     totalAmount: {
         type: Number,
-        required: true,
-    },
-    unitPrice: {
-        type: Number,
-        required: true,
+        // required: true,
     },
     barcodeID: {
         type: String,
-        required: true,
+        // required: true,
     },
     quantity: {
         type: Number,
-        required: true,
+        // required: true,
     },
     billID: {
         type: String,
         unique: true,
-        required: true,
+        // required: true,
     },
     transactionID: {
         type: String,
         required: false,
     },
     soldBy: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User', // Links the sale to the staff who made it
-        required: true,
+        // type: mongoose.Schema.Types.ObjectId,
+        // ref: 'User', // Links the sale to the staff who made it
+        type: String,
+        // required: true,
     },
     branch: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Branch', // Links the sale to a specific branch
-        required: true,
+        // type: mongoose.Schema.Types.ObjectId,
+        // ref: 'Branch', // Links the sale to a specific branch
+        type: String,
+        // required: true,
     },
     paymentVerified: {
         type: Boolean,
@@ -57,6 +64,7 @@ const salesSchema = mongoose.Schema({
     receiptNumber: {
         type: String,
         required: false,
+        unique: true,
     },
 });
 

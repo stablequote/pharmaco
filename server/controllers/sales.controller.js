@@ -4,10 +4,11 @@ const Inventory = require('../models/inventory.model');
 // Make a sale
 exports.makeSale = async (req, res) => {
     try {
-        const { productID, quantity, modeOfPayment, unitPrice, soldBy, branch } = req.body;
-
+        // const { productID, quantity, modeOfPayment, unitPrice, soldBy, branch } = req.body;
+        const { name, barcodeID, unit, quantity, unitPurchasePrice, unitSalePrice, totalAmount, soldBy, modeOfPayment, branch, date, supplier } = req.body; // all details of inventory.poplulate('product supplier') + user.name + timestamps
+        
         // Check product availability
-        const product = await Inventory.findById(productID);
+        const product = await Inventory.findOne({ barcodeID });
         if (!product || product.quantity < quantity) {
             return res.status(400).json({ error: 'Insufficient stock or product not found.' });
         }
@@ -18,27 +19,31 @@ exports.makeSale = async (req, res) => {
 
         // Create sale record
         const sale = new Sales({
-            product: productID,
+            product: name,
             quantity,
+            unitSalePrice,
+            unitPurchasePrice,
+            totalAmount: unitSalePrice * quantity,
             modeOfPayment,
-            unitPrice,
-            totalAmount: unitPrice * quantity,
+            revenue: unitSalePrice * quantity - unitPurchasePrice * quantity,
             soldBy,
             branch,
             billID: `BILL-${Date.now()}`, // Generate unique bill ID
+            date: Date.now()
         });
 
         await sale.save();
         res.status(201).json({ message: 'Sale successful.', sale });
     } catch (error) {
         res.status(500).json({ error: 'Failed to make sale.' });
+        console.log(error)
     }
 };
 
-const listSales = async (req, res) => {
+exports.listSales = async (req, res) => {
     try {
         const sales = await Sales.find({})
-        return res.status(201).json({message: 'sales fetched successfully', sales})
+        return res.status(200).json({message: 'sales fetched successfully', sales})
     } catch (error) {
         console.log(error)
     }

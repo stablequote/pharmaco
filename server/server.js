@@ -10,6 +10,7 @@ const DB_URI = process.env.DB_URI
 const authRouter = require("./routes/user.route")
 const inventoryRouter = require("./routes/inventory.route")
 const orderRouter = require("./routes/order.route")
+const salesRouter = require("./routes/sales.route")
 
 try {
     mongoose.connect(DB_URI).then(() => {
@@ -34,6 +35,7 @@ app.use(bodyParser.urlencoded({extended: true}))
 app.use("/auth", authRouter)
 app.use("/inventory", inventoryRouter)
 app.use('/orders', orderRouter);
+app.use('/sales', salesRouter);
 
 // running the server
 app.listen(5005, () => {
