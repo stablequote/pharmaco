@@ -1,13 +1,21 @@
 const mongoose = require('mongoose');
 
 const userSchema = mongoose.Schema({
-    name: {
+    firstName: {
+        type: String,
+        required: true,
+    },
+    lastName: {
         type: String,
         required: true,
     },
     username: {
         type: String,
         // unique: true,
+        required: true,
+    },
+    password: {
+        type: String,
         required: true,
     },
     role: {
@@ -22,19 +30,11 @@ const userSchema = mongoose.Schema({
     //         return this.role !== 'owner'; // Only non-owners need a branch
     //     },
     // },
-    dateAdded: {
-        type: Date,
-        default: Date.now,
-    },
-    contactDetails: {
+    contactDetails: [{
         phone: String,
         email: String,
         location: String,
-    },
-    password: {
-        type: String,
-        required: true,
-    },
+    }],
     // sales: [
     //     {
     //         type: mongoose.Schema.Types.ObjectId,
@@ -45,6 +45,6 @@ const userSchema = mongoose.Schema({
         type: String, // The refresh token is stored as a string
         default: null, // Default to null if no refresh token exists yet
     }
-});
+}, { timestamps: true });
 
 module.exports = mongoose.model('User', userSchema);
