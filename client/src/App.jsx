@@ -7,6 +7,10 @@ import Home from './pages/Home';
 import './App.css'
 import VerifiyTransaction from './pages/VerifyTransaction';
 import PosPage from './pages/PosPage';
+import Analytics from './pages/Analytics';
+import Orders from './pages/Orders';
+import Suppliers from './pages/Suppliers';
+import ProductSales from './pages/ProductSales';
 
 const App = () => {
   return (
@@ -17,6 +21,10 @@ const App = () => {
           <Route path="inventory" element={<Inventory />} />
           <Route path="pos" element={<PosPage />} />
           <Route path="verify" element={<VerifiyTransaction />} />
+          <Route path="analytics" element={<Analytics />} />
+          <Route path="orders" element={<Orders />} />
+          <Route path="suppliers" element={<Suppliers />} />
+          <Route path="sales" element={<ProductSales />} />
         </Route>
       </Routes>
     </Router>
