@@ -1,25 +1,38 @@
 const mongoose = require('mongoose');
 
 const salesSchema = mongoose.Schema({
-    name: {
-        // type: mongoose.Schema.Types.ObjectId,
-        // ref: 'Inventory', // Links the sale to a product in inventory
-        type: String,
-        // required: true,
-    },
-    date: {
-        type: Date,
-        default: Date.now,
+    // name: {
+    //     // type: mongoose.Schema.Types.ObjectId,
+    //     // ref: 'Inventory', // Links the sale to a product in inventory
+    //     type: String,
+    //     // required: true,
+    // },
+    items: [
+        {
+          product: { type: String, required: true },
+          quantity: { type: Number, required: true },
+          unit: { type: String, required: true },
+          unitSalePrice: { type: Number, required: true },
+          unitPurchasePrice: { type: Number, required: true },
+          totalUnitAmount: { type: Number, required: true }, // unitSalePrice * quantity
+          unitRevenue: { type: Number, required: true },
+        }
+    ],
+    totalCartAmount: { // Sum of all totalUnitAmount
+        type: Number, required: true 
+    }, 
+    cartRevenue: {  // Sum of all unitRevenue
+        type: Number, required: true 
     },
     modeOfPayment: {
         type: String,
         enum: ['cash', 'bankak', 'fawry'], // Example payment methods
         // required: true,
     },
-    unitSalePrice: {
-        type: Number,
-        // required: true,
-    },
+    // unitSalePrice: {
+    //     type: Number,
+    //     // required: true,
+    // },
     unitPurchasePrice: {
         type: Number,
         // required: true,
@@ -32,19 +45,20 @@ const salesSchema = mongoose.Schema({
         type: String,
         // required: true,
     },
-    quantity: {
-        type: Number,
-        // required: true,
-    },
+    // quantity: {
+    //     type: Number,
+    //     // required: true,
+    // },
     billID: {
         type: String,
-        unique: true,
+        // unique: true,
         // required: true,
     },
-    transactionID: {
+    receiptNumber: {
         type: String,
-        required: false,
+        uique: false,
     },
+   
     soldBy: {
         // type: mongoose.Schema.Types.ObjectId,
         // ref: 'User', // Links the sale to the staff who made it
@@ -61,11 +75,6 @@ const salesSchema = mongoose.Schema({
         type: Boolean,
         default: false,
     },
-    receiptNumber: {
-        type: String,
-        required: false,
-        unique: true,
-    },
-});
+}, {timestamps: true});
 
 module.exports = mongoose.model('Sales', salesSchema);
