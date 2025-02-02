@@ -5,15 +5,17 @@ const User = require('../models/user.model'); // Import User schema
 // User registration
 exports.register = async (req, res) => {
     try {
-        const { name, username, password, role, branch } = req.body;
+        const { firstName, lastName, username, password, role, branch, contactDetails } = req.body;
 
         const hashedPassword = await bcrypt.hash(password, 10);
         const newUser = new User({
-            name,
+            firstName,
+            lastName,
             username,
             password: hashedPassword,
             role,
             branch,
+            contactDetails
         });
 
         await newUser.save();
