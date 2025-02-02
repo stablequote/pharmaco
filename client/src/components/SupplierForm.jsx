@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { TextInput, Group, Button, Modal, Select } from '@mantine/core';
+import { TextInput, Group, Button, Modal, Select, Flex } from '@mantine/core';
 
 const SupplierForm = ({ opened, setOpened, handleAddSupplier }) => {
   const [newSupplier, setNewSupplier] = useState({
-    name: '',
+    supplierName: '',
     contact: '',
     address: '',
     email: '',
@@ -19,8 +19,8 @@ const SupplierForm = ({ opened, setOpened, handleAddSupplier }) => {
     <Modal opened={opened} onClose={() => setOpened(false)} title="Add New Supplier">
       <TextInput
         label="Supplier Name"
-        value={newSupplier.name}
-        onChange={(e) => setNewSupplier({ ...newSupplier, name: e.target.value })}
+        value={newSupplier.supplierName}
+        onChange={(e) => setNewSupplier({ ...newSupplier, supplierName: e.target.value })}
         required
       />
       <TextInput
@@ -48,12 +48,12 @@ const SupplierForm = ({ opened, setOpened, handleAddSupplier }) => {
         onChange={(e) => setNewSupplier({ ...newSupplier, phoneNumber: e.target.value })}
         required
       />
-      <Group position="right" mt="md">
+      <Flex justify="space-between" mt="md">
         <Button variant="light" onClick={() => setOpened(false)}>
           Cancel
         </Button>
         <Button onClick={handleSubmit}>Add Supplier</Button>
-      </Group>
+      </Flex>
     </Modal>
   );
 };
