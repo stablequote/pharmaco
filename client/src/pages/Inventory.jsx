@@ -8,12 +8,116 @@ import axios from 'axios';
 import * as XLSX from "xlsx";
 import { showNotification } from '@mantine/notifications';
 
+
 const Inventory = () => {
   const openRef = useRef(null);
   const [opened, { open, close }] = useDisclosure(false);
   const [inventoryData, setInventoryData] = useState([])
   const [excelData, setExcelData] = useState([]); // State to store the parsed data
   const theme = useMantineTheme();
+
+  const columns = [
+    {
+      accessorKey: 'barcodeID',
+      header: 'Barcode',
+      size: 40,
+    },
+    {
+      accessorKey: 'product',
+      header: 'Product',
+      size: 120,
+    },
+    {
+      accessorKey: 'shelf',
+      header: 'Shelf',
+      size: 40,
+    },
+    {
+      accessorKey: 'quantity',
+      header: 'Quantity',
+      size: 120,
+      Cell: ({ cell }) => (
+        <Box
+          sx={(theme) => ({
+            backgroundColor:
+              cell.getValue() < 100 ? theme.colors.red[9] : theme.colors.white,
+            borderRadius: '4px',
+            color: cell.getValue() < 100 ? 'white' : theme.colors.blue,
+            maxWidth: '9ch',
+            padding: '4px',
+          })}
+        >
+          {cell.getValue()?.toLocaleString?.('en-US', {
+            currency: 'SDG',
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 0,
+          })}
+        </Box>
+      ),
+    },
+    {
+      accessorKey: 'unit',
+      header: 'Unit',
+      size: 120,
+    },
+    {
+      accessorKey: 'expiryDate',
+      header: 'Expiry Date',
+      size: 100,
+      mantineEditTextInputProps: ({ cell }) => ({
+        ...getCommonEditTextInputProps(cell),
+      }),
+      Cell: ({ cell }) => (
+        // onclick( () => console.log(cell))
+        <Box>
+          {moment(cell.getValue()).format("DD-MMMM-YYYY")}
+  
+        </Box>
+      ),
+    },
+    {
+      accessorKey: 'unitPurchasePrice',
+      header: 'Purchase Price',
+      size: 100,
+      Cell: ({ cell }) => (
+        <Box
+          sx={(theme) => ({
+            borderRadius: '4px',
+            maxWidth: '9ch',
+            padding: '4px',
+          })}
+        >
+          {cell.getValue()?.toLocaleString?.('en-US', {
+            style: 'currency',
+            currency: 'SDG',
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 0,
+          })}
+        </Box>
+      ),
+    },
+    {
+      accessorKey: 'unitSalePrice',
+      header: 'Sale Price',
+      size: 100,
+      Cell: ({ cell }) => (
+        <Box
+          sx={(theme) => ({
+            borderRadius: '4px',
+            maxWidth: '9ch',
+            padding: '4px',
+          })}
+        >
+          {cell.getValue()?.toLocaleString?.('en-US', {
+            style: 'currency',
+            currency: 'SDG',
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 0,
+          })}
+        </Box>
+      ),
+    },
+  ];
 
 
   // const fetchInventoryData = async (url) => {
@@ -117,7 +221,7 @@ const Inventory = () => {
         {/* <Text fz="lg" fw="bold" align="center">Inventory Page</Text> */}
         <Box>
           {/* <Text mb="md" fz="lg" fw="bold">Search Medication/Product</Text> */}
-          <Flex justify="space-between" pt="lg" height={415} mb="md">
+          <Flex justify="space-between" pt="lg" height={415} mb="xs" >
               <Button 
                 variant="filled" 
                 color='blue' 
@@ -133,7 +237,7 @@ const Inventory = () => {
             
             
             {/* File input for Excel upload */}
-            <Group position="center" mb="md">
+            <Group position="center" >
               <input
                 type="file"
                 accept="text/csv, application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
@@ -161,7 +265,8 @@ const Inventory = () => {
           <ProductForm close={close} />
         </Modal>
         {/* <DataGrid inventoryData={inventoryData} /> */}
-        {inventoryData.length > 0 ? <DataGrid inventoryData={inventoryData} /> : <p>Loading inventory data...</p>}
+        {/* {inventoryData.length > 0 ? <DataGrid inventoryData={inventoryData} /> : <p>Loading inventory data...</p>} */}
+        <DataGrid data={inventoryData} columns={columns} />
       </Container>
     </>
   );
