@@ -57,10 +57,10 @@ const AppNavbar = () => {
       </NavLink>
       {/* <Divider size={1} my={10} /> */}
       <NavLink
-        to="/reports"
+        to="/sales"
         style={({ isActive }) => (isActive ? activeStyle : undefined)}
       >
-        Reports
+        Sales
       </NavLink>
       <NavLink
         to="/analytics"
