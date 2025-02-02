@@ -48,7 +48,7 @@ function CartOverview({ cart, updateQuantity }) {
                     </Group>
                 </Grid.Col>
                 <Grid.Col span={2}>
-                    <Text>${(item.unitSalePrice).toFixed(2)}</Text>
+                    <Text>{(item.unitSalePrice).toFixed(2)}</Text>
                 </Grid.Col>
                 </Grid>
             </Group>
