@@ -1,19 +1,13 @@
 import { MantineReactTable, useMantineReactTable } from 'mantine-react-table';
 import { Box, Button } from '@mantine/core';
 import { IconDownload } from '@tabler/icons-react';
-import { mkConfig, generateCsv, download } from 'export-to-csv'; //or use your library of choice here
-import { data } from '../utils/data';
+import { mkConfig, generateCsv, download } from 'export-to-csv';
+import moment from 'moment'
 
-//defining columns outside of the component is fine, is stable
 const columns = [
   {
-    accessorKey: 'id',
-    header: 'ID',
-    size: 40,
-  },
-  {
-    accessorKey: 'shelf',
-    header: 'Shelf',
+    accessorKey: 'barcodeID',
+    header: 'Barcode',
     size: 40,
   },
   {
@@ -22,18 +16,19 @@ const columns = [
     size: 120,
   },
   {
+    accessorKey: 'shelf',
+    header: 'Shelf',
+    size: 40,
+  },
+  {
     accessorKey: 'quantity',
     header: 'Quantity',
     size: 120,
-    mantineEditTextInputProps: ({ cell }) => ({
-      ...getCommonEditTextInputProps(cell),
-    }),
-     //custom conditional format and styling
-     Cell: ({ cell }) => (
+    Cell: ({ cell }) => (
       <Box
         sx={(theme) => ({
           backgroundColor:
-          cell.getValue() < 100 ? theme.colors.red[9] : theme.colors.white,
+            cell.getValue() < 100 ? theme.colors.red[9] : theme.colors.white,
           borderRadius: '4px',
           color: cell.getValue() < 100 ? 'white' : theme.colors.blue,
           maxWidth: '9ch',
@@ -41,7 +36,6 @@ const columns = [
         })}
       >
         {cell.getValue()?.toLocaleString?.('en-US', {
-          // style: 'currency',
           currency: 'SDG',
           minimumFractionDigits: 0,
           maximumFractionDigits: 0,
@@ -58,16 +52,22 @@ const columns = [
     accessorKey: 'expiryDate',
     header: 'Expiry Date',
     size: 100,
-  },
-  {
-    accessorKey: 'price',
-    header: 'Price',
-    size: 100,
     mantineEditTextInputProps: ({ cell }) => ({
       ...getCommonEditTextInputProps(cell),
     }),
-     //custom conditional format and styling
-     Cell: ({ cell }) => (
+    Cell: ({ cell }) => (
+      // onclick( () => console.log(cell))
+      <Box>
+        {moment(cell.getValue()).format("DD-MMMM-YYYY")}
+
+      </Box>
+    ),
+  },
+  {
+    accessorKey: 'unitPurchasePrice',
+    header: 'Purchase Price',
+    size: 100,
+    Cell: ({ cell }) => (
       <Box
         sx={(theme) => ({
           borderRadius: '4px',
@@ -85,14 +85,10 @@ const columns = [
     ),
   },
   {
-    accessorKey: 'salePrice',
+    accessorKey: 'unitSalePrice',
     header: 'Sale Price',
     size: 100,
-    mantineEditTextInputProps: ({ cell }) => ({
-      ...getCommonEditTextInputProps(cell),
-    }),
-     //custom conditional format and styling
-     Cell: ({ cell }) => (
+    Cell: ({ cell }) => (
       <Box
         sx={(theme) => ({
           borderRadius: '4px',
@@ -117,7 +113,8 @@ const csvConfig = mkConfig({
   useKeysAsHeaders: true,
 });
 
-const DataGrid = () => {
+const DataGrid = ({ inventoryData = [] }) => {
+  
   const handleExportRows = (rows) => {
     const rowData = rows.map((row) => row.original);
     const csv = generateCsv(csvConfig)(rowData);
@@ -125,20 +122,20 @@ const DataGrid = () => {
   };
 
   const handleExportData = () => {
-    const csv = generateCsv(csvConfig)(data);
+    const csv = generateCsv(csvConfig)(inventoryData);
     download(csvConfig)(csv);
   };
 
   const table = useMantineReactTable({
     columns,
-    data,
+    data: inventoryData, // Use the correct prop name
     enableRowSelection: true,
     columnFilterDisplayMode: 'popover',
     paginationDisplayMode: 'pages',
     positionToolbarAlertBanner: 'bottom',
     initialState: {
-      pagination: {pageSize: 5},
-      density: "xs"
+      pagination: { pageSize: 5 },
+      density: 'xs',
     },
     renderTopToolbarCustomActions: ({ table }) => (
       <Box
@@ -193,15 +190,17 @@ const DataGrid = () => {
     ),
   });
 
-  return <MantineReactTable 
-          table={table}
-          positionGlobalFilter="right"
-          mantineSearchTextInputProps={{
-            placeholder: `Search ${data.length} rows`,
-            sx: { minWidth: '300px' },
-            variant: 'filled',
-          }}
-        />;
-      };
+  return (
+    <MantineReactTable
+      table={table}
+      positionGlobalFilter="right"
+      mantineSearchTextInputProps={{
+        placeholder: `Search ${inventoryData.length} rows`,
+        sx: { minWidth: '300px' },
+        variant: 'filled',
+      }}
+    />
+  );
+};
 
 export default DataGrid;
