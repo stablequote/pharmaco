@@ -27,6 +27,45 @@ exports.addProduct = async (req, res) => {
     }
 };
 
+// Controller to handle bulk data import for inventory
+exports.imporFromExcel = async (req, res) => {
+    console.log(req.body)
+    try {
+      const inventoryData = req.body; // Assumed to be an array of objects from the client
+  
+      if (!Array.isArray(inventoryData) || inventoryData.length === 0) {
+        return res.status(400).json({ message: 'Invalid data format' });
+      }
+  
+      // Map the incoming data to t schema
+      const mappedData = inventoryData.map((item) => {
+        return {
+          product: item.product,
+          quantity: item.quantity,
+          unit: item.unit,
+          unitPurchasePrice: item.unitPurchasePrice,
+          unitSalePrice: item.unitSalePrice,
+          expiryDate: item.expiryDate,
+          barcodeID: item.barcodeID,
+          shelf: item.shelf,
+        };
+      });
+
+      console.log(mappedData)
+  
+      // Bulk insert the data into MongoDB
+      const result = await Inventory.insertMany(mappedData);
+  
+      return res.status(201).json({
+        message: `${result.length} inventory items imported successfully`,
+        data: result,
+      });
+    } catch (error) {
+      console.error('Error importing inventory data:', error);
+      return res.status(500).json({ message: 'Error processing inventory data' });
+    }
+};
+
 // List all products
 exports.listAllProducts = async (req, res) => {
     try {
