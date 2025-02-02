@@ -5,39 +5,155 @@ const Inventory = require('../models/inventory.model');
 exports.makeSale = async (req, res) => {
     try {
         // const { productID, quantity, modeOfPayment, unitPrice, soldBy, branch } = req.body;
-        const { name, barcodeID, unit, quantity, unitPurchasePrice, unitSalePrice, totalAmount, soldBy, modeOfPayment, branch, date, supplier } = req.body; // all details of inventory.poplulate('product supplier') + user.name + timestamps
-        
-        // Check product availability
-        const product = await Inventory.findOne({ barcodeID });
-        if (!product || product.quantity < quantity) {
-            return res.status(400).json({ error: 'Insufficient stock or product not found.' });
-        }
-
-        // Deduct quantity from inventory
-        product.quantity -= quantity;
-        await product.save();
-
-        // Create sale record
-        const sale = new Sales({
-            product: name,
-            quantity,
-            unitSalePrice,
-            unitPurchasePrice,
-            totalAmount: unitSalePrice * quantity,
-            modeOfPayment,
-            revenue: unitSalePrice * quantity - unitPurchasePrice * quantity,
-            soldBy,
-            branch,
-            billID: `BILL-${Date.now()}`, // Generate unique bill ID
-            date: Date.now()
+        const { items, totalAmount, soldBy, modeOfPayment, branch } = req.body; // all details of inventory.poplulate('product supplier') + user.name + timestamps
+    
+        console.log(items)
+        // console.log(items.forEach(item => item.barcodeID))
+        items.forEach(item => {
+            console.log(item.barcodeID);
         });
 
-        await sale.save();
-        res.status(201).json({ message: 'Sale successful.', sale });
+        // NEW LOGIC TO CHECK ALL ITEMS AGAINST DATABASE IF THEY EXIST
+        if (!items || items.length === 0) {
+            return res.status(400).json({ message: "No items provided in the request." });
+        }
+      
+        // Step 1: Check if all items exist in inventory and have sufficient stock
+        const unavailableItems = [];
+        const validatedItems = [];
+    
+        for (const item of items) {
+        const inventoryItem = await Inventory.findOne({ barcodeID: item.barcodeID });
+        console.log(inventoryItem.quantity)
+        console.log(inventoryItem.product)
+    
+        if (!inventoryItem) {
+            unavailableItems.push(`${item.product} is not available in inventory.`);
+        } else if (inventoryItem.quantity < item.quantity) {
+            unavailableItems.push(`${item.product} only has ${inventoryItem.quantity} in stock, but ${item.quantity} was requested.`)
+        } else {
+            // Prepare stock update
+            // validatedItems.push({
+            // barcodeID: inventoryItem.barcodeID,
+            // newStock: inventoryItem.quantity - item.quantity
+            // })
+            
+            // bug fix ==> deepseek
+            validatedItems.push({
+                ...item, // Include all fields from the original item
+                barcodeID: inventoryItem.barcodeID,
+                newStock: inventoryItem.quantity - item.quantity,
+            });
+        }
+        }
+
+        // Step 2: If any item is unavailable, return an error
+        if (unavailableItems.length > 0) {
+            return res.status(400).json({ message: "Stock error", errors: unavailableItems });
+        }
+
+        // Step 3: Deduct stock in inventory
+        // for (const update of validatedItems) {
+        //     await Inventory.updateOne({ barcodeID: update.barcodeID }, { quantity: update.newStock });
+        // }
+
+        // Update product stock ==> deepseek
+        for (const item of validatedItems) {
+            await Inventory.updateOne({ barcodeID: item.barcodeID },{ $inc: { quantity: -item.quantity } }) // Decrease stock by the sold quantity
+        }
+
+        // Calculate total cart amount & revenue
+        const totalCartAmount = validatedItems.reduce((total, product) => total + product.quantity * product.unitSalePrice, 0);
+        const cartRevenue = validatedItems.reduce((total, product) => total + (product.quantity * product.unitSalePrice) - (product.quantity * product.unitPurchasePrice), 0);
+
+        // Format validatedItems with necessary calculations
+        const formattedItems = validatedItems.map(item => ({
+            product: item.product,
+            quantity: item.quantity,
+            unit: item.unit,
+            unitPurchasePrice: item.unitPurchasePrice,
+            unitSalePrice: item.unitSalePrice,
+            totalUnitAmount: item.unitSalePrice * item.quantity,
+            unitRevenue: (item.unitSalePrice - item.unitPurchasePrice) * item.quantity,
+        }));
+
+        console.log("formatted items...", formattedItems)
+
+        // Generate unique bill ID
+        // const billID = `BILL-${Date.now()}`;
+        const billID = `BILL-${Date.now()}-${Math.random().toString(36).substring(2, 8)}`;
+        const receiptNumber = `REC-${Date.now()}-${Math.random().toString(36).substring(2, 8)}`;
+        
+        // Save to Sales collection
+        const newSale = new Sales({
+            billID,
+            receiptNumber,
+            date: Date.now(),
+            modeOfPayment,
+            soldBy,
+            branch,
+            totalCartAmount,
+            cartRevenue,
+            items: formattedItems,
+        });
+
+        await newSale.save();
+        console.log(newSale)
+
+        res.status(201).json({ message: 'Sale successful.', newSale });
     } catch (error) {
         res.status(500).json({ error: 'Failed to make sale.' });
         console.log(error)
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+        // ######################## OLD LOGIC DOWN HERE ########################
+
+        // Check product availability
+        // const inventory = await Inventory.findOne({ barcodeID });
+        // if (!inventory || inventory.quantity < quantity) {
+        //     return res.status(400).json({ error: 'Insufficient stock or product not found.' });
+        // }
+
+        // // Deduct quantity from inventory
+        // inventory.quantity -= quantity;
+        // await inventory.save();
+
+    //     // Create sale record
+    //     const sale = new Sales({
+    //         name: item.name,
+    //         quantity: item.quantity,
+    //         unit: item.unit,
+    //         unitSalePrice: item.unitSalePrice,
+    //         unitPurchasePrice: item.unitPurchasePrice,
+    //         totalUnitAmount: item.unitSalePrice * quantity,
+    //         unitRevenue: unitSalePrice * quantity - unitPurchasePrice * quantity,
+    //         totalCartAmount: item.reduce((total, product) => total + product.quantity * product.unitSalePrice, 0),
+    //         cartRevenue: item.reduce((total, product) => total + (product.quantity * product.unitSalePrice) - (product.quantity * product.unitPurchasePrice), 0) ,
+    //         modeOfPayment,
+    //         soldBy,
+    //         branch,
+    //         billID: `BILL-${Date.now()}`, // Generate unique bill ID
+    //         date: Date.now()
+    //     });
+
+    //     await sale.save();
+    //     res.status(201).json({ message: 'Sale successful.', sale });
+    // } catch (error) {
+    //     res.status(500).json({ error: 'Failed to make sale.' });
+    //     console.log(error)
+    // }
 };
 
 exports.listSales = async (req, res) => {
