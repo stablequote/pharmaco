@@ -1,9 +1,10 @@
 import { Paper, Group, Text, Divider, Button, Select } from '@mantine/core'
-import { notifications } from '@mantine/notifications'
+import { notifications, showNotification } from '@mantine/notifications'
 
-function CartPaymentSection({ calculateNetTotal, payment, setPayment, setReceiptVisible, receiptVisible, resetCart }) {
+function CartPaymentSection({ calculateNetTotal, payment, setPayment, setReceiptVisible, receiptVisible, resetCart, cart, handlePayment }) {
 
     const makePayment = async () => {
+      if(cart.length > 0) {
         setReceiptVisible(!receiptVisible)
         notifications.show({
             title: 'Success',
@@ -24,6 +25,13 @@ function CartPaymentSection({ calculateNetTotal, payment, setPayment, setReceipt
                 },
               }),
         })
+      } else {
+        showNotification({
+          title: "No item!",
+          message: "At least one item should be added",
+          color: "red",
+        })
+      }
     }
     
   return (
@@ -35,7 +43,7 @@ function CartPaymentSection({ calculateNetTotal, payment, setPayment, setReceipt
 
             <Group position="apart" mb="xs">
             <Text>Net Total</Text>
-            <Text>${calculateNetTotal().toFixed(2)}</Text>
+            <Text>SDG {calculateNetTotal().toFixed(2)}</Text>
             </Group>
             <Group position="apart" mb="xs">
             <Text>Paid Amount</Text>
@@ -43,7 +51,7 @@ function CartPaymentSection({ calculateNetTotal, payment, setPayment, setReceipt
             </Group>
             <Group position="apart" mb="xs">
             <Text>Due Amount</Text>
-            <Text>${calculateNetTotal().toFixed(2)}</Text>
+            <Text>SDG {calculateNetTotal().toFixed(2)}</Text>
             </Group>
 
             <Select
@@ -58,7 +66,7 @@ function CartPaymentSection({ calculateNetTotal, payment, setPayment, setReceipt
             />
             <Group position="apart">
             <Button variant="outline" color="red" onClick={() => resetCart()}>Reset</Button>
-            <Button color="green" onClick={() => makePayment()}>Confirm</Button>
+            <Button color="green" onClick={() => handlePayment()}>Confirm</Button>
             </Group>
         </Paper>
     )}

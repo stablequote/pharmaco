@@ -18,6 +18,7 @@ import {
   Select,
   Center,
   Container,
+  Flex,
 } from "@mantine/core";
 import { useMediaQuery } from '@mantine/hooks';
 import { showNotification } from "@mantine/notifications";
@@ -25,16 +26,28 @@ import CartOverview from "../components/CartOverview";
 import CartPaymentSection from "../components/CartPaymentSection";
 import BarcodeScan from "../components/BarcodeScan";
 import axios from 'axios'
+import { jsPDF } from "jspdf";
 
 // const isMobile = useMediaQuery('(max-width: 375px)');
 
 // Sample product database
 const products = [
-  { _id: "1234", product: "Paracetamol 500mg",  quantity: 1, unitSalePrice: 50, barcodeID: "6251065033005" },
-  { _id: "5678", product: "Ibuprofen 200mg", quantity: 1, unitSalePrice: 100, barcodeID: "" },
-  { _id: "9101", product: "Vitamin C 100mg",  quantity: 3,unitSalePrice: 30, barcodeID: "" },
-  { _id: "1123", product: "Cough Syrup 100ml",  quantity: 1,unitSalePrice: 80, barcodeID: "" },
-  { _id: "3456", product: "Antacid Tablets", quantity: 6, unitSalePrice: 60, barcodeID: "" },
+  // { _id: "1234", name: "Digestive enzime",  quantity: 1, unitSalePrice: 50, barcodeID: "6154841894848" },
+  { _id: "679b92a0633d92d38e46c275",
+    product: "Digestive Enzymes",
+    quantity: 3,
+    unit: "stripe",
+    expiryDate: "2026-11-08T22:00:00.000Z",
+    unitPurchasePrice: 900,
+    unitSalePrice: 1300,
+    shelf: "A1",
+    barcodeID: "6154840000000",
+    "createdAt": "2025-01-30T14:54:24.234Z",
+    "updatedAt": "2025-01-31T14:48:28.414Z",},
+  { _id: "5678", product: "Pain Relief Cream", quantity: 1, unit: "lotion", unitPurchasePrice: 1100, unitSalePrice: 1900, barcodeID: "9268839786736" },
+  // { _id: "9101", name: "Vitamin C 100mg",  quantity: 3, unitSalePrice: 30, barcodeID: "3632839390600" },
+  // { _id: "1123", name: "Cough Syrup 100ml",  quantity: 1, unitSalePrice: 80, barcodeID: "7794465889647" },
+  // { _id: "3456", name: "Antacid Tablets", quantity: 6, unitSalePrice: 60, barcodeID: "7497866254327" },
 ];
 
 const PosPage = () => {
@@ -47,6 +60,7 @@ const PosPage = () => {
   const [barcode, setBarcode] = useState([]);
   const [scanner, setScanner] = useState(false);
   const scannerRef = useRef(null);
+  const receiptRef = useRef(null);
   const [payment, setPayment] = useState({
       netTotal: 0,
       discount: 0,
@@ -55,13 +69,16 @@ const PosPage = () => {
       dueAmount: 0,
       paymentType: "Cash",
     });
-
+  const [paymentResponse, setPaymentResponse] = useState(null)
+  
+  
   useEffect(() => {
     if (scannerModalOpened) {
       startScanner();
     } else {
       stopScanner();
     }
+    console.log(cart)
   }, [scannerModalOpened]);
 
   const startScanner = async () => {
@@ -227,6 +244,223 @@ const PosPage = () => {
     console.log(cart)
   }
 
+  const handlePrint = () => {
+    if (receiptRef.current) {
+      const printWindow = window.open("", "_blank");
+      printWindow.document.write(`
+        <html>
+          <head>
+            <title>Receipt</title>
+            <style>
+              body { font-family: Arial, sans-serif; padding: 20px; }
+              h2 { text-align: center; }
+              table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+              th, td { border: 1px solid black; padding: 10px; text-align: left; }
+              th { background-color: #f2f2f2; }
+              .total { font-weight: bold; }
+            </style>
+          </head>
+          <body>
+            <h2>Kambal Pharmacy Receipt</h2>
+            <table>
+              <thead>
+                <tr>
+                  <th>Product</th>
+                  <th>Quantity</th>
+                  <th>Price</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${cart
+                  .map(
+                    (item) => `
+                    <tr>
+                      <td>${item.product}</td>
+                      <td>${item.quantity}</td>
+                      <td>SDG ${item.unitSalePrice}</td>
+                    </tr>
+                  `
+                  )
+                  .join("")}
+                <tr class="total">
+                  <td colspan="2">Total</td>
+                  <td>SDG ${calculateNetTotal()}</td>
+                </tr>
+              </tbody>
+            </table>
+          </body>
+        </html>
+      `);
+      printWindow.document.close();
+      printWindow.print();
+    }
+  };
+
+  const handlePrintThermal = async () => {
+    try {
+      // Request access to the thermal printer
+      const device = await navigator.usb.requestDevice({
+        filters: [{ vendorId: 0x0416 }], // Replace with your printer's vendor ID
+      });
+  
+      await device.open();
+      if (device.configuration === null) {
+        await device.selectConfiguration(1);
+      }
+      await device.claimInterface(0);
+  
+      // ESC/POS Command Generator
+      const encoder = new TextEncoder();
+      const ESC = "\x1B"; // ESC command
+      const LF = "\x0A"; // Line feed (new line)
+      const CUT = ESC + "m"; // Cut command
+  
+      let receipt = ESC + "a1"; // Align center
+      receipt += "XYZ Pharmacy" + LF;
+      receipt += "1234 Main Street" + LF;
+      receipt += "City, Country" + LF;
+      receipt += "--------------------------------" + LF;
+      receipt += `Receipt No: INV-${Date.now()}` + LF;
+      receipt += `Date: ${new Date().toLocaleString()}` + LF;
+      receipt += "--------------------------------" + LF;
+  
+      // Add cart items
+      cart.forEach((item) => {
+        receipt += `${item.product} x${item.quantity}  $${(item.unitSalePrice * item.quantity).toFixed(2)}` + LF;
+      });
+  
+      receipt += "--------------------------------" + LF;
+      receipt += `Total: $${calculateNetTotal().toFixed(2)}` + LF;
+      receipt += "--------------------------------" + LF;
+      receipt += "Thank you for shopping with us!" + LF;
+      receipt += "Visit again!" + LF;
+      receipt += CUT; // Cut the paper
+  
+      // Convert text to bytes
+      const receiptBytes = encoder.encode(receipt);
+  
+      // Send data to the printer
+      await device.transferOut(1, receiptBytes);
+  
+      showNotification({
+        title: "Printing",
+        message: "Receipt is being printed...",
+        color: "green",
+      });
+  
+      await device.close();
+    } catch (error) {
+      console.error("Print error:", error);
+      showNotification({
+        title: "Print Error",
+        message: "Could not print the receipt. Please check printer connection.",
+        color: "red",
+      });
+    }
+  };
+
+const autoPrintPDF = () => {
+  const doc = new jsPDF();
+  doc.text("Your Receipt Here", 10, 10);
+  
+  // Auto-save the PDF
+  doc.autoPrint();
+  window.open(doc.output("bloburl"), "_blank");
+};
+
+const preparePaymentData = (cart) => {
+  return {
+    modeOfPayment: "bankak",
+    soldBy: "Asaad",
+    branch: "Thawra 30",
+    items: cart.map(item => ({
+      product: item.product,
+      quantity: item.quantity,
+      unit: item.unit,
+      unitSalePrice: item.unitSalePrice,
+      unitPurchasePrice: item.unitPurchasePrice,
+      barcodeID: item.barcodeID
+      // totalPrice: item.quantity * item.unitSalePrice // Optional, if needed by server
+    })),
+    billID: `BILL - ${Date.now()}`,
+  };
+};
+
+const paymentPayload = preparePaymentData(cart);
+console.log(paymentPayload); 
+
+const handlePayment = async () => {
+  
+  const url = "http://localhost:5005/sales/make-sale"
+  
+  console.log(paymentPayload)
+
+  try {
+
+    if(cart.length <= 0) {
+      showNotification({
+        title: "No item!",
+        message: "At least one item should be added",
+        color: "red",
+      })
+      return;
+    }
+    
+      const result = await axios.post(url, paymentPayload, {
+        // headers: {
+        //   'Content-Type': 'application/json',
+        // },
+      });
+
+      console.log(result)
+  
+      setPaymentResponse(result.data); // Handle the response from the server
+      if(result.status === 201) {
+        showNotification({
+          title: "Successful",
+          message: "Payment was successfully made",
+          color: "green",
+        })
+        setReceiptVisible(!receiptVisible)
+        console.log("successful", result)
+      
+    // } else if (result.response.status === 400) {
+    //   console.log(result.response.data.message)
+    //   showNotification({
+    //     title: result.data.message,
+    //     message: result.response.data.errors.map((err) => err),
+    //     color: "orange",
+    //   })
+    } else {
+      showNotification({
+        title: "server error",
+        message: "maybe check again!",
+        color: "red",
+      })
+    }
+  } catch (err) {
+    // setError(err.message || 'An error occurred while submitting the form.');
+
+    console.log(err.response.status)
+
+    if (err.response.status === 400) {
+      console.log(err.response.data.message)
+      showNotification({
+        title: err.response.data.message,
+        message: err.response.data.errors.map((err) => err),
+        color: "orange",
+    })
+  } else {
+    
+    showNotification({
+      title: "Payment error",
+      message: "Error while making payment. Please try again",
+      color: "red",
+    })
+  }
+
+  }
+}
 
   return (
     <div style={{ padding: "20px", overflow: "hidden !important" }}>
@@ -278,6 +512,8 @@ const PosPage = () => {
               setReceiptVisible={setReceiptVisible}
               receiptVisible={receiptVisible}
               resetCart={resetCart}
+              cart={cart}
+              handlePayment={handlePayment}
             />
         </Col>
       </Grid>
@@ -290,7 +526,7 @@ const PosPage = () => {
         title="Receipt"
         centered
       >
-        <Paper>
+        <Paper ref={receiptRef}>
           <Title order={4}>Customer Receipt</Title>
           <Table>
             <thead>
@@ -305,18 +541,19 @@ const PosPage = () => {
                 <tr key={i}>
                   <td>{item.product}</td>
                   <td>{item.quantity}</td>
-                  <td>${item.unitSalePrice * item.quantity}</td>
+                  <td>SDG {item.unitSalePrice * item.quantity}</td>
                 </tr>
               ))}
             </tbody>
           </Table>
           <Text mt="md" weight={700}>
-            Total Amount Paid: ${calculateNetTotal()}
+            Total Amount Paid: &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; SDG {calculateNetTotal()}
           </Text>
         </Paper>
-        <Button mt="md" fullWidth onClick={resetProcess}>
-          New Transaction
-        </Button>
+        <Flex justify="space-between"  >
+          <Button mt="md" color="blue" onClick={resetProcess}>New Transaction</Button>
+          <Button mt="md" color="gray" onClick={() => handlePrint()}>Print</Button>
+        </Flex>
       </Modal>
     </div>
   );
