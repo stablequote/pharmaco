@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { Box, Button } from '@mantine/core';
+import { Box, Button, Flex } from '@mantine/core';
 import OrderForm from '../components/OrderForm';
 import DataGrid from '../components/DataGrid';
+import { IconMedicalCrossCircle } from '@tabler/icons-react';
 
 const Orders = () => {
   const orderColumns = [
@@ -27,6 +28,9 @@ const Orders = () => {
 
   return (
     <Box>
+      <Flex mb="xs" justify="flex-end">
+        <Button variant='filled' color="green" onClick={() => setOpened(!opened)} leftIcon={<IconMedicalCrossCircle />} >Create Order</Button>
+      </Flex>
       <DataGrid data={ordersData} columns={orderColumns} />
       <OrderForm opened={opened} setOpened={setOpened} handleAddOrder={handleAddOrder} suppliers={['Supplier A', 'Supplier B']} />
     </Box>
