@@ -1,64 +1,37 @@
 import React, { useState } from 'react';
-import { Box, Button } from '@mantine/core';
-import { MantineReactTable, useMantineReactTable } from 'mantine-react-table';
-import { IconDownload } from '@tabler/icons-react';
-import { mkConfig, generateCsv, download } from 'export-to-csv';
+import { Box, Button, Flex } from '@mantine/core';
 import SupplierForm from '../components/SupplierForm';
-
-const columns = [
-  { accessorKey: 'supplierName', header: 'Supplier Name', size: 150 },
-  { accessorKey: 'contact', header: 'Contact', size: 120 },
-  { accessorKey: 'productCount', header: 'Products Supplied', size: 120 },
-  { accessorKey: 'orderCount', header: 'Orders Placed', size: 120 },
-];
-
-const csvConfig = mkConfig({
-  fieldSeparator: ',',
-  decimalSeparator: '.',
-  useKeysAsHeaders: true,
-});
+import DataGrid from '../components/DataGrid';
+import { IconAccessible } from '@tabler/icons-react';
 
 const Suppliers = () => {
-  const [inventoryData, setInventoryData] = useState([
+  const supplierColumns = [
+    { accessorKey: 'supplierName', header: 'Supplier Name', size: 150 },
+    { accessorKey: 'contact', header: 'Contact', size: 120 },
+    { accessorKey: 'productCount', header: 'Products Supplied', size: 120 },
+    { accessorKey: 'orderCount', header: 'Orders Placed', size: 120 },
+  ];
+  const data = [
     { supplierName: 'Supplier A', contact: '123-456-7890', productCount: 20, orderCount: 5 },
     { supplierName: 'Supplier B', contact: '987-654-3210', productCount: 15, orderCount: 3 },
-  ]);
+  ]
+
+  const [suppliersData, setSuppliersData] = useState(data);
   const [opened, setOpened] = useState(false);
 
-  const handleExportData = () => {
-    const csv = generateCsv(csvConfig)(inventoryData);
-    download(csvConfig)(csv);
-  };
-
   const handleAddSupplier = (newSupplier) => {
-    setInventoryData((prevData) => [
+    setSuppliersData((prevData) => [
       ...prevData,
-      { ...newSupplier, productCount: 0, orderCount: 0 },
+      { ...newSupplier, productCount: 130, orderCount: 23 },
     ]);
   };
 
-  const table = useMantineReactTable({
-    columns,
-    data: inventoryData,
-    enableRowSelection: true,
-    columnFilterDisplayMode: 'popover',
-    paginationDisplayMode: 'pages',
-    initialState: { pagination: { pageSize: 5 }, density: 'xs' },
-    renderTopToolbarCustomActions: () => (
-      <Box sx={{ display: 'flex', gap: '16px', padding: '8px' }}>
-        <Button color="lightblue" onClick={handleExportData} leftIcon={<IconDownload />} variant="filled">
-          Export All Data
-        </Button>
-        <Button onClick={() => setOpened(true)} variant="filled">
-          Add New Supplier
-        </Button>
-      </Box>
-    ),
-  });
-
   return (
     <Box>
-      <MantineReactTable table={table} />
+      <Flex mb="xs" justify="flex-end">
+        <Button variant='filled' color="yellow" leftIcon={<IconAccessible />} onClick={() => setOpened(!opened)} >Add Supplier</Button>
+      </Flex>
+      <DataGrid data={suppliersData} columns={supplierColumns} />
       <SupplierForm opened={opened} setOpened={setOpened} handleAddSupplier={handleAddSupplier} />
     </Box>
   );
