@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { TextInput, Group, Button, Modal, Select, } from '@mantine/core';
+import { TextInput, Group, Button, Modal, Select, Flex, } from '@mantine/core';
 import { DateInput } from '@mantine/dates'
 import moment from 'moment';
 
@@ -74,12 +74,12 @@ const OrderForm = ({ opened, setOpened, handleAddOrder, suppliers }) => {
         required
         defaultValue="Pending"
       />
-      <Group position="right" mt="md">
+      <Flex justify="space-between" mt="md">
         <Button variant="light" onClick={() => setOpened(false)}>
           Cancel
         </Button>
         <Button onClick={handleSubmit}>Create Order</Button>
-      </Group>
+      </Flex>
     </Modal>
   );
 };
