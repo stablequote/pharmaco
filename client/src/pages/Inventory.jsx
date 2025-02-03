@@ -7,7 +7,7 @@ import ProductForm from '../components/ProductForm';
 import axios from 'axios';
 import * as XLSX from "xlsx";
 import { showNotification } from '@mantine/notifications';
-
+import moment from 'moment';
 
 const Inventory = () => {
   const openRef = useRef(null);
