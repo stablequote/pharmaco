@@ -12,9 +12,11 @@ import {
 import { useForm } from "@mantine/form";
 import { DateInput, DatePickerInput } from "@mantine/dates";
 import axios from "axios";
+import { showNotification } from "@mantine/notifications";
 
 const ProductForm = ({ close }) => {
   const [expiryDate, setExpiryDate] = useState(null);
+  const BASE_URL = import.meta.env.VITE_URL
 
   const form = useForm({
     initialValues: {
@@ -51,8 +53,18 @@ const ProductForm = ({ close }) => {
         ...values,
         expiryDate: values.expiryDate ? new Date(values.expiryDate).toISOString() : null,
       };
-
-      await axios.post("http://localhost:5005/inventory/add", formattedValues);
+      
+      const url = `${BASE_URL}/inventory/add`
+      const res = await axios.post(url, formattedValues);
+      console.log(res)
+      
+      if(res.status === 201) {
+        showNotification({
+          title: "Successfully added!",
+          message: "Congrats! You have successfully added a new products",
+          color: "green",
+        })
+      }
 
       close();
     } catch (error) {

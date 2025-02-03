@@ -182,7 +182,7 @@ const Inventory = () => {
   // Function to send data to backend server
   const sendDataToBackend = async (data) => {
     // const url = "http://localhost:5005/inventory/import-from-excel";
-    const url = `${process.env.BASE_URL}/inventory/import-from-excel`
+    const url = `${BASE_URL}/inventory/import-from-excel`
 
     try {
       const response = await fetch(url, {
