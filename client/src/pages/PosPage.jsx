@@ -32,7 +32,6 @@ import { jsPDF } from "jspdf";
 
 // Sample product database
 const products = [
-  // { _id: "1234", name: "Digestive enzime",  quantity: 1, unitSalePrice: 50, barcodeID: "6154841894848" },
   { _id: "679b92a0633d92d38e46c275",
     product: "Digestive Enzymes",
     quantity: 3,
@@ -70,7 +69,7 @@ const PosPage = () => {
       paymentType: "Cash",
     });
   const [paymentResponse, setPaymentResponse] = useState(null)
-  
+  const BASE_URL = import.meta.env.VITE_URL;
   
   useEffect(() => {
     if (scannerModalOpened) {
@@ -199,10 +198,8 @@ const PosPage = () => {
 
   const handleBarcode = async (data) => {
     setBarcode(data);
-  
     try {
-
-      const baseUrl = 'http://localhost:5005/inventory/search';
+      const baseUrl = `${BASE_URL}/inventory/search'`
       const response = await axios.get(`${baseUrl}/${data}`);
       console.log(response)
   
@@ -390,13 +387,10 @@ const paymentPayload = preparePaymentData(cart);
 console.log(paymentPayload); 
 
 const handlePayment = async () => {
-  
-  const url = "http://localhost:5005/sales/make-sale"
-  
+  const url = `${BASE_URL}/sales/make-sale`
   console.log(paymentPayload)
 
   try {
-
     if(cart.length <= 0) {
       showNotification({
         title: "No item!",
@@ -411,7 +405,6 @@ const handlePayment = async () => {
         //   'Content-Type': 'application/json',
         // },
       });
-
       console.log(result)
   
       setPaymentResponse(result.data); // Handle the response from the server
@@ -423,24 +416,15 @@ const handlePayment = async () => {
         })
         setReceiptVisible(!receiptVisible)
         console.log("successful", result)
-      
-    // } else if (result.response.status === 400) {
-    //   console.log(result.response.data.message)
-    //   showNotification({
-    //     title: result.data.message,
-    //     message: result.response.data.errors.map((err) => err),
-    //     color: "orange",
-    //   })
-    } else {
-      showNotification({
-        title: "server error",
-        message: "maybe check again!",
-        color: "red",
-      })
-    }
+    
+      } else {
+        showNotification({
+          title: "server error",
+          message: "maybe check again!",
+          color: "red",
+        })
+      }
   } catch (err) {
-    // setError(err.message || 'An error occurred while submitting the form.');
-
     console.log(err.response.status)
 
     if (err.response.status === 400) {
@@ -451,14 +435,12 @@ const handlePayment = async () => {
         color: "orange",
     })
   } else {
-    
     showNotification({
       title: "Payment error",
       message: "Error while making payment. Please try again",
       color: "red",
     })
   }
-
   }
 }
 
