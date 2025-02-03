@@ -58,7 +58,7 @@ const Analytics = () => {
         },
         revenueData: 2655000  ,
         activeUsers: 2486,
-        newOrders: 11,
+        newOrders: 2,
       });
     };
 
