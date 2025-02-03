@@ -10,6 +10,7 @@ import { showNotification } from '@mantine/notifications';
 import moment from 'moment';
 
 const Inventory = () => {
+
   const openRef = useRef(null);
   const [opened, { open, close }] = useDisclosure(false);
   const [inventoryData, setInventoryData] = useState([])
@@ -119,6 +120,8 @@ const Inventory = () => {
     },
   ];
 
+  const BASE_URL = import.meta.env.VITE_BASE_URL
+
 
   // const fetchInventoryData = async (url) => {
   //   const res = await axios.get(url)
@@ -212,8 +215,11 @@ const Inventory = () => {
   };
 
   useEffect(() => {
-    const url = "http://localhost:5005/inventory/list-all";
+    // const url = "http://localhost:5005/inventory/list-all";
+    const url = `${BASE_URL}/inventory/list-all`
     fetchInventoryData(url)
+    console.log(url) // "123"
+
   }, [])
 
   return (
