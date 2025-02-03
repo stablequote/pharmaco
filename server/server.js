@@ -25,7 +25,8 @@ mongoose.set('strictQuery', false)
 
 // middleware
 app.use(cors({
-    origin: ["http://localhost:5173", "https://pharmacia.onrender.com", "https://pharmacia.vercel.app", "https://pharmaco-alpha.vercel.app/"],
+    // origin: ["http://localhost:5173", "https://pharmacia.onrender.com", "https://pharmacia.vercel.app", "https://pharmaco-alpha.vercel.app/"],
+    origin: "*",
     credentials: 'true',
 }))
 app.use(express.json());
