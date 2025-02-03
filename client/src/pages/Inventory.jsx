@@ -120,7 +120,7 @@ const Inventory = () => {
     },
   ];
 
-  const BASE_URL = import.meta.env.VITE_BASE_URL
+  const BASE_URL = import.meta.env.VITE_URL
 
 
   // const fetchInventoryData = async (url) => {
