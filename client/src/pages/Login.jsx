@@ -38,7 +38,13 @@ function Login() {
         console.log("error")
       }
     } catch (error) {
-      console.error('Error:', err);
+      console.error('Error:', error);
+      showNotification({
+        title: "Network error",
+        message: "Network error, check again",
+        color: "red"
+      })
+      setLoading(false)
     }
 
   }
