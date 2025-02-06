@@ -7,22 +7,35 @@ export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
 
+    const BASE_URL = import.meta.env.VITE_URL;
+
     useEffect(() => {
-        axios.get("/api/auth/me")
+        axios.get(`${BASE_URL}/auth/login`)
             .then((res) => setUser(res.data))
             .catch(() => setUser(null))
             .finally(() => setLoading(false));
     }, []);
 
     const login = async (credentials) => {
-        const res = await axios.post("/api/auth/login", credentials);
+        const res = await axios.post(`${BASE_URL}/auth/login`, credentials);
         setUser(res.data.user);
-        return res.data.accessToken;
+        return res.data.authToken;
     };
 
     const logout = async () => {
-        await axios.post("/api/auth/logout");
-        setUser(null);
+        try {
+            // Call the logout endpoint (optional)
+            await axios.post(`${BASE_URL}/auth/logout`);
+            setUser(null);
+
+            // Clear tokens and user data from localStorage
+            localStorage.removeItem("authToken");
+        
+            // Redirect the user to the login page
+            window.location.href = "/login";
+          } catch (error) {
+            console.error("Logout failed:", error);
+        }
     };
 
     return (

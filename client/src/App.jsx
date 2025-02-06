@@ -13,28 +13,31 @@ import Suppliers from './pages/Suppliers';
 import ProductSales from './pages/ProductSales';
 import Login from './pages/Login';
 import PrivateRoute from './pages/ProtectedRoute';
+import { AuthProvider } from './context/AuthContext';
 
 const App = () => {
   return (
-    <Router>
-      <Routes>
-          {/* <Route index  element={<Login />} /> */}
-          <Route element={<PrivateRoute allowedRoles={['owner', 'manager']} />}>
-            <Route path="/" element={<DashboardLayout />}>
-              <Route path="home" element={<Home />} />
-              <Route path="inventory" element={<Inventory />} />
-              <Route path="pos" element={<PosPage />} />
-              <Route path="verify" element={<VerifiyTransaction />} />
-              <Route path="analytics" element={<Analytics />} />
-              <Route path="orders" element={<Orders />} />
-              <Route path="suppliers" element={<Suppliers />} />
-              <Route path="sales" element={<ProductSales />} />
+    <AuthProvider>
+      <Router>
+        <Routes>
+            {/* <Route index  element={<Login />} /> */}
+            <Route element={<PrivateRoute allowedRoles={['owner', 'manager']} />}>
+              <Route path="/" element={<DashboardLayout />}>
+                <Route path="home" element={<Home />} />
+                <Route path="inventory" element={<Inventory />} />
+                <Route path="pos" element={<PosPage />} />
+                <Route path="verify" element={<VerifiyTransaction />} />
+                <Route path="analytics" element={<Analytics />} />
+                <Route path="orders" element={<Orders />} />
+                <Route path="suppliers" element={<Suppliers />} />
+                <Route path="sales" element={<ProductSales />} />
+              </Route>
             </Route>
-          </Route>
-        {/* Default Route */}
-        <Route path='/login' element={<Login />} />
-      </Routes>
-    </Router>
+          {/* Default Route */}
+          <Route path='/login' element={<Login />} />
+        </Routes>
+      </Router>
+    </AuthProvider>
   );
 };
 
