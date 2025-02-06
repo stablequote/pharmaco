@@ -17,7 +17,7 @@ const AppNavbar = () => {
   return (
     <Navbar width={ !isMobile ? { base: 250 } : 100} p="xs" sx={{background: '#1D242E'}}>
       <NavLink
-        to="/"
+        to="/home"
         style={({ isActive }) => (isActive ? activeStyle : undefined)}
         
       >

@@ -11,13 +11,15 @@ import Analytics from './pages/Analytics';
 import Orders from './pages/Orders';
 import Suppliers from './pages/Suppliers';
 import ProductSales from './pages/ProductSales';
+import Login from './pages/Login';
 
 const App = () => {
   return (
     <Router>
       <Routes>
+          <Route index  element={<Login />} />
         <Route path="/" element={<DashboardLayout />}>
-          <Route index element={<Home />} />
+          <Route path="home" element={<Home />} />
           <Route path="inventory" element={<Inventory />} />
           <Route path="pos" element={<PosPage />} />
           <Route path="verify" element={<VerifiyTransaction />} />
@@ -26,6 +28,8 @@ const App = () => {
           <Route path="suppliers" element={<Suppliers />} />
           <Route path="sales" element={<ProductSales />} />
         </Route>
+        {/* Default Route */}
+        <Route path='/login' element={<Login />} />
       </Routes>
     </Router>
   );
