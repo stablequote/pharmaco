@@ -3,6 +3,7 @@ import { NavLink } from 'react-router-dom';
 import { Button, Divider, Navbar } from '@mantine/core';
 import { IconHome } from '@tabler/icons-react';
 import { useMediaQuery } from '@mantine/hooks';
+import { useAuth } from '../context/AuthContext'
 
 const AppNavbar = () => {
 
@@ -14,12 +15,13 @@ const AppNavbar = () => {
 
   const isMobile = useMediaQuery('(max-width: 375px)');
 
+  const { logout } = useAuth()
+
   return (
     <Navbar width={ !isMobile ? { base: 250 } : 100} p="xs" sx={{background: '#1D242E'}}>
       <NavLink
         to="/home"
         style={({ isActive }) => (isActive ? activeStyle : undefined)}
-        
       >
         <IconHome />
         Home
@@ -75,7 +77,7 @@ const AppNavbar = () => {
       >
         Profile
       </NavLink>
-      <Button color='red' mt="lg">Logout</Button>
+      <Button color='red' mt="lg" onClick={logout}>Logout</Button>
     </Navbar>
   );
 };
