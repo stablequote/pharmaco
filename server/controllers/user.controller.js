@@ -48,3 +48,9 @@ exports.login = async (req, res) => {
         res.status(500).json({ error: 'Login failed.' });
     }
 };
+
+exports.logout = (req, res) => {
+    // In a real-world application, we might want to blacklist the token here
+    // For now, we'll just respond with a success message
+    res.status(200).json({ message: "Logout successful." });
+};
