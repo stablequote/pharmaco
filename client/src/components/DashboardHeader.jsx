@@ -21,7 +21,7 @@ const DashboardHeader = () => {
   return (
     <Header height={60}  p="md" sx={{backgroundColor: "#1D242E", color: "white"}} >
       <Flex justify="space-between">
-        <Text color="white">PHARMACO</Text>
+        <Text color="white" fw="bold">PHARMACO</Text>
         
         {/* <Group>
           <Input
