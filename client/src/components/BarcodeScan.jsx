@@ -91,6 +91,7 @@ const BarcodeScan = ({ barcode, handleBarcode }) => {
                     }}
                     deviceId={deviceId} // Use deviceId here
                     scanDelay={1500}
+                    allowMultiple={true}
                 />
             </div>
         </>
