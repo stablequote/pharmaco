@@ -38,7 +38,7 @@ const DashboardHeader = () => {
             placeholder="Language"
             defaultValue="English"
           />
-          <Text>{moment(Date.now()).format('DD-MMMM-YYYY')}</Text>
+          <Text>{moment(Date.now()).format('DD-MMMM-YYYY h:mm A')}</Text>
           <ActionIcon onClick={() => alert("Notifications feature is coming soom...")}>
             <IconBell size={20} />
           </ActionIcon>
