@@ -2,6 +2,7 @@ import { AppShell, Header, Flex, Button, Group, Stack, Footer, Box, Text, Drawer
 import AppNavbar from './Navbar';
 import { Outlet } from 'react-router-dom';
 import { useDisclosure } from '@mantine/hooks';
+import DashboardHeader from './DashboardHeader';
 
 function DashboardWrapper() {
   const [opened, { open, close }] = useDisclosure(false);
@@ -10,14 +11,7 @@ function DashboardWrapper() {
     <AppShell
       padding="md"
       navbar={<AppNavbar />}
-      header={
-        <Header height={60} p="xs" sx={{backgroundColor: '#1D242E'}}>
-          <Flex>
-            <Burger color='white' mr="lg" onClick={open} />
-          <Text color='white' fw="bold" fz="lg">Pharmaco</Text>
-          </Flex>
-        </Header>
-      }
+      header={<DashboardHeader />}
       // footer={
       //   <Box height={60} p="xs">
       //     <Text align="center">© 2025 Pharmacy Inc.</Text>
