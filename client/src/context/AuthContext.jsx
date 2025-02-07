@@ -10,7 +10,7 @@ export const AuthProvider = ({ children }) => {
     const BASE_URL = import.meta.env.VITE_URL;
 
     useEffect(() => {
-        axios.get(`${BASE_URL}/auth/login`)
+        axios.post(`${BASE_URL}/auth/login`)
             .then((res) => setUser(res.data))
             .catch(() => setUser(null))
             .finally(() => setLoading(false));
