@@ -77,7 +77,7 @@ const AppNavbar = () => {
       >
         Profile
       </NavLink>
-      <Button color='red' mt="lg" onClick={logout}>Logout</Button>
+      <Button color='red' mt="lg" onClick={logout} sx={{position: "absolute", bottom: 22, left: 10, width: "90%"}}>Logout</Button>
     </Navbar>
   );
 };
