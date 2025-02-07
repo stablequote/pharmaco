@@ -199,7 +199,7 @@ const PosPage = () => {
   const handleBarcode = async (data) => {
     setBarcode(data);
     try {
-      const baseUrl = `${BASE_URL}/inventory/search'`
+      const baseUrl = `${BASE_URL}/inventory/search`
       const response = await axios.get(`${baseUrl}/${data}`);
       console.log(response)
   
