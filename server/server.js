@@ -6,22 +6,40 @@ require('dotenv').config();
 const bodyParser = require('body-parser');
 
 const DB_URI = process.env.DB_URI
+const DB_LOCAL = process.env.DB_LOCAL
 
 const authRouter = require("./routes/user.route")
 const inventoryRouter = require("./routes/inventory.route")
 const orderRouter = require("./routes/order.route")
 const salesRouter = require("./routes/sales.route")
+const SupplierRouter = require("./routes/supplier.route")
 
-try {
-    mongoose.connect(DB_URI).then(() => {
-        console.log("connected to db")
-    })
-} catch (error) {
-    console.log(error)
-}
+const connectDB = async () => {
+  try {
+    await mongoose.connect("mongodb://127.0.0.1:27017/", {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
+    console.log("✅ Connected to MongoDB");
+  } catch (error) {
+    console.error("❌ MongoDB Connection Error:", error.message);
+    process.exit(1); // Exit process if DB connection fails
+  }
+};
 
-// db connection
-mongoose.set('strictQuery', false)
+connectDB(); // Call the function
+
+
+// try {
+//     mongoose.connect("mongodb://localhost:27017/").then(() => {
+//         console.log("connected to db")
+//     })
+// } catch (error) {
+//     console.log(error)
+// }
+
+// // db connection
+// mongoose.set('strictQuery', false)
 
 // middleware
 app.use(cors({
@@ -37,8 +55,15 @@ app.use("/auth", authRouter)
 app.use("/inventory", inventoryRouter)
 app.use('/orders', orderRouter);
 app.use('/sales', salesRouter);
+app.use('/supplier', SupplierRouter);
 
+app.get("/test", (req, res) => {
+    res.send("server is working")
+    console.log("test is working!!")
+})
 // running the server
 app.listen(5005, () => {
     console.log("server running on port 5005")
 })
+
+process.stdin.resume(); // Keeps the process open
