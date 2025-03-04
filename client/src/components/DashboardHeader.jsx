@@ -15,7 +15,7 @@ import {
 import { IconSearch, IconBell, IconUser } from "@tabler/icons-react";
 import moment from "moment";
 
-const DashboardHeader = () => {
+const DashboardHeader = ({changeLanguage, value}) => {
   const theme = useMantineTheme();
 
   return (
@@ -34,9 +34,14 @@ const DashboardHeader = () => {
         {/* Right side: Date, time, and icons */}
         <Group>
           <Select
-            data={["English", "Arabic"]}
+            data={[
+              {value: "en", label: "English"},
+              {value: "ar", label: "Arabic"}
+            ]}
             placeholder="Language"
             defaultValue="English"
+            value={value}
+            onChange={changeLanguage}
           />
           <Text>{moment(Date.now()).format('DD-MMMM-YYYY h:mm A')}</Text>
           <ActionIcon onClick={() => alert("Notifications feature is coming soom...")}>
