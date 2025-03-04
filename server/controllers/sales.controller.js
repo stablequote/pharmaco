@@ -5,7 +5,7 @@ const Inventory = require('../models/inventory.model');
 exports.makeSale = async (req, res) => {
     try {
         // const { productID, quantity, modeOfPayment, unitPrice, soldBy, branch } = req.body;
-        const { items, totalAmount, soldBy, modeOfPayment, branch } = req.body; // all details of inventory.poplulate('product supplier') + user.name + timestamps
+        const { items, totalPaidAmount, soldBy, modeOfPayment, branch } = req.body; // all details of inventory.poplulate('product supplier') + user.name + timestamps
     
         console.log(items)
         // console.log(items.forEach(item => item.barcodeID))
@@ -64,6 +64,7 @@ exports.makeSale = async (req, res) => {
 
         // Calculate total cart amount & revenue
         const totalCartAmount = validatedItems.reduce((total, product) => total + product.quantity * product.unitSalePrice, 0);
+        const totalCartPaidAmount = validatedItems.reduce((total, product) => total + product.quantity * product.unitSalePrice, 0);
         const cartRevenue = validatedItems.reduce((total, product) => total + (product.quantity * product.unitSalePrice) - (product.quantity * product.unitPurchasePrice), 0);
 
         // Format validatedItems with necessary calculations
@@ -93,6 +94,7 @@ exports.makeSale = async (req, res) => {
             soldBy,
             branch,
             totalCartAmount,
+            totalPaidAmount,
             cartRevenue,
             items: formattedItems,
         });
@@ -186,5 +188,121 @@ exports.generateReceipt = async (req, res) => {
         res.status(200).json(receipt);
     } catch (error) {
         res.status(500).json({ error: 'Failed to generate receipt.' });
+    }
+};
+
+// Helper function to get the start and end of the day
+const getStartAndEndOfDay = () => {
+    const start = new Date();
+    start.setHours(0, 0, 0, 0); // Start of the day
+    const end = new Date();
+    end.setHours(23, 59, 59, 999); // End of the day
+    return { start, end };
+};
+  
+// Helper function to get the start and end of the week
+const getStartAndEndOfWeek = () => {
+    const start = new Date();
+    start.setDate(start.getDate() - start.getDay()); // Start of the week (Sunday)
+    start.setHours(0, 0, 0, 0);
+    const end = new Date();
+    end.setDate(end.getDate() + (6 - end.getDay())); // End of the week (Saturday)
+    end.setHours(23, 59, 59, 999);
+    return { start, end };
+};
+  
+// Helper function to get the start and end of the month
+const getStartAndEndOfMonth = () => {
+    const start = new Date();
+    start.setDate(1); // Start of the month
+    start.setHours(0, 0, 0, 0);
+    const end = new Date();
+    end.setMonth(end.getMonth() + 1, 0); // End of the month
+    end.setHours(23, 59, 59, 999);
+    return { start, end };
+};
+
+// Calculate total sales for today
+exports.getTotalNumberOfSalesToday = async (req, res) => {
+    try {
+      const { start, end } = getStartAndEndOfDay();
+      
+      const totalSalesCount = await Sales.countDocuments({
+        createdAt: { $gte: start, $lte: end } // Count sales created today
+      });
+  
+      res.status(200).json({ totalSalesCount });
+    } catch (error) {
+      console.error("Error fetching total number of sales for today:", error);
+      res.status(500).json({ message: "Error fetching total number of sales for today" });
+    }
+  };
+
+// Calculate total sales for this week
+exports.getTotalSalesThisWeek = async (req, res) => {
+    try {
+      const { start, end } = getStartAndEndOfWeek();
+      const totalSales = await Sales.aggregate([
+        {
+          $match: {
+            createdAt: { $gte: start, $lte: end },
+          },
+        },
+        {
+          $group: {
+            _id: null,
+            total: { $sum: "$totalAmount" },
+          },
+        },
+      ]);
+      res.status(200).json({ totalSales: totalSales[0]?.total || 0 });
+    } catch (error) {
+      res.status(500).json({ message: "Error fetching total sales for this week" });
+    }
+};
+
+// Calculate total sales for this month
+exports.getTotalSalesThisMonth = async (req, res) => {
+    try {
+      const { start, end } = getStartAndEndOfMonth();
+      const totalSales = await Sales.aggregate([
+        {
+          $match: {
+            createdAt: { $gte: start, $lte: end },
+          },
+        },
+        {
+          $group: {
+            _id: null,
+            total: { $sum: "$totalAmount" },
+          },
+        },
+      ]);
+      res.status(200).json({ totalSales: totalSales[0]?.total || 0 });
+    } catch (error) {
+      res.status(500).json({ message: "Error fetching total sales for this month" });
+    }
+};
+
+// Calculate total sales for today
+exports.getTotalSalesRevenueToday = async (req, res) => {
+    try {
+      const { start, end } = getStartAndEndOfDay();
+      const totalSalesRevenueToday = await Sales.aggregate([
+        {
+          $match: {
+            createdAt: { $gte: start, $lte: end },
+          },
+        },
+        {
+          $group: {
+            _id: null,
+            total: { $sum: "$cartRevenue" }, // Replace "totalAmount" with your sales amount field
+          },
+        },
+      ]);
+      res.status(200).json({ totalSalesRevenueToday: totalSalesRevenueToday[0]?.total || 0 });
+    } catch (error) {
+      res.status(500).json({ message: "Error fetching total sales revenue for today" });
     }
 };
