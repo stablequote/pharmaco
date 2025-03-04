@@ -1,5 +1,6 @@
 const Inventory = require('../models/inventory.model');
-const Barcode = require('barcode-generator'); // For barcode generation
+const Sales = require('../models/sales.model');
+// const Barcode = require('barcode-generator'); // For barcode generation
 
 // Add a product
 exports.addProduct = async (req, res) => {
@@ -92,23 +93,39 @@ exports.searchByBarcode = async (req, res) => {
     }
 };
 
-// Generate barcode for a product
-exports.generateBarcode = async (req, res) => {
+// Search product by name ==> list single product
+exports.searchByName = async (req, res) => {
     try {
-        const { productID } = req.params;
+        const { name } = req.body;
+        console.log(name)
 
-        const product = await Inventory.findById(productID);
-        if (!product) return res.status(404).json({ message: 'Product not found.' });
+        const productItem = await Inventory.findOne({ product: name });
+        if (!productItem) return res.status(404).json({ message: 'Product not found.' });
 
-        const barcodeID = Barcode.generate(); // Generate a unique barcode
-        product.barcodeID = barcodeID;
-
-        await product.save();
-        res.status(200).json({ message: 'Barcode generated.', barcodeID });
+        res.status(200).json(productItem);
     } catch (error) {
-        res.status(500).json({ error: 'Failed to generate barcode.' });
+        res.status(500).json({ error: 'Failed to search product.' });
+        console.log(error)
     }
 };
+
+// Generate barcode for a product
+// exports.generateBarcode = async (req, res) => {
+//     try {
+//         const { productID } = req.params;
+
+//         const product = await Inventory.findById(productID);
+//         if (!product) return res.status(404).json({ message: 'Product not found.' });
+
+//         const barcodeID = Barcode.generate(); // Generate a unique barcode
+//         product.barcodeID = barcodeID;
+
+//         await product.save();
+//         res.status(200).json({ message: 'Barcode generated.', barcodeID });
+//     } catch (error) {
+//         res.status(500).json({ error: 'Failed to generate barcode.' });
+//     }
+// };
 
 // Update a product
 exports.updateProduct = async (req, res) => {
@@ -125,12 +142,63 @@ exports.updateProduct = async (req, res) => {
     }
 };
 
+// return a product
+exports.returnProduct = async (req, res) => {
+    try {
+        const { _id: saleId, items } = req.body;
+
+        for (const item of items) {
+            const { product: productName, quantity, unit, unitSalePrice, unitPurchasePrice, totalUnitAmount, unitRevenue } = item;
+
+            // Find the product in the inventory by name
+            let existingProduct = await Inventory.findOne({ product: productName });
+
+            if (existingProduct) {
+                // Update stock quantity
+                existingProduct.quantity += quantity;
+                await existingProduct.save();
+            } else {
+                // Create a new inventory entry if product does not exist
+                const newProduct = new Inventory({
+                    product: productName,
+                    quantity,
+                    unit,
+                    unitSalePrice,
+                    unitPurchasePrice,
+                    totalUnitAmount,
+                    unitRevenue,
+                });
+                await newProduct.save();
+            }
+        }
+
+        // Delete the sale from the database
+        const deletedSale = await Sales.findByIdAndDelete(saleId);
+
+        if (!deletedSale) {
+            return res.status(404).json({ error: 'Sale not found' });
+        }
+
+        // Fetch the updated sales list
+        const sales = await Sales.find({});
+
+        return res.status(200).json({
+            message: 'Return processed successfully and sale removed from database',
+            sales,
+        });
+
+    } catch (error) {
+        console.error('Error returning product:', error);
+        return res.status(500).json({ error: 'Failed to return product.', details: error.message });
+    }
+};
+
 // Delete a single product
 exports.deleteSingleProduct = async (req, res) => {
     try {
-        const { productID } = req.params;
+        const { id } = req.params;
 
-        const deletedProduct = await Inventory.findByIdAndDelete(productID);
+        const deletedProduct = await Inventory.findByIdAndDelete(id);
         if (!deletedProduct) return res.status(404).json({ message: 'Product not found.' });
 
         res.status(200).json({ message: 'Product deleted successfully.' });
