@@ -12,6 +12,7 @@ import {
   Tooltip,
   Legend,
 } from 'chart.js';
+import { useTranslation } from 'react-i18next';
 
 // Registering necessary Chart.js components
 ChartJS.register(
@@ -28,6 +29,7 @@ ChartJS.register(
 const Analytics = () => {
   // State to hold mock data
   const [data, setData] = useState(null);
+  const { t } = useTranslation();
 
   // Simulating an API call with generated data
   useEffect(() => {
@@ -37,7 +39,7 @@ const Analytics = () => {
           labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
           datasets: [
             {
-              label: 'Sales Growth',
+              label: t("SALES-GROWTH"),
               data: [1200, 2000, 1800, 2500, 3000, 3200, 3600],
               borderColor: 'rgb(75, 192, 192)',
               backgroundColor: 'rgba(75, 192, 192, 0.2)',
@@ -47,7 +49,7 @@ const Analytics = () => {
           ],
         },
         pieChartData: {
-          labels: ['Product A', 'Product B', 'Product C', 'Product D'],
+          labels: [t('Creams'), t('Syrubs'), t('Tablets'), t('Cosmetics')],
           datasets: [
             {
               data: [300, 500, 700, 100],
@@ -84,9 +86,9 @@ const Analytics = () => {
         {/* Line Chart */}
         <Grid.Col xs={12} md={6}>
           <Card shadow="sm" padding="lg">
-            <Title order={2}>Sales Growth</Title>
+            <Title order={2}>{t("SALES-GROWTH")}</Title>
             <Paper padding="md" shadow="xs">
-              <Line data={data.lineChartData} options={{ responsive: true, plugins: { title: { display: true, text: 'Sales Over Time' } } }} />
+              <Line data={data.lineChartData} options={{ responsive: true, plugins: { title: { display: true, text: t("SALES-OVER-TIME") } } }} />
             </Paper>
           </Card>
         </Grid.Col>
@@ -94,7 +96,7 @@ const Analytics = () => {
         {/* Pie Chart */}
         <Grid.Col xs={12} md={6}>
           <Card shadow="sm" padding="lg">
-            <Title order={2}>Product Distribution</Title>
+            <Title order={2}>{t("PRODUCT-DISTRIBUTION")}</Title>
             <Paper padding="md" shadow="xs">
               <Pie data={data.pieChartData} options={{ responsive: true }} />
             </Paper>
@@ -106,21 +108,21 @@ const Analytics = () => {
         {/* Data Cards */}
         <Grid.Col xs={12} md={4}>
           <Card shadow="sm" padding="lg">
-            <Title order={3}>Last week's revenue</Title>
+            <Title order={3}>{t("LAST-WEEK'S-REVENUE")}</Title>
             <Text size="xl" weight={500}>SDG {data.revenueData.toLocaleString()}</Text>
           </Card>
         </Grid.Col>
 
         <Grid.Col xs={12} md={4}>
           <Card shadow="sm" padding="lg">
-            <Title order={3}>Sales this week</Title>
+            <Title order={3}>{t("SALES-THIS-WEEK")}</Title>
             <Text size="xl" weight={500}>{data.activeUsers}</Text>
           </Card>
         </Grid.Col>
 
         <Grid.Col xs={12} md={4}>
           <Card shadow="sm" padding="lg">
-            <Title order={3}>New Orders</Title>
+            <Title order={3}>{t("NEW-ORDERS")}</Title>
             <Text size="xl" weight={500}>{data.newOrders}</Text>
           </Card>
         </Grid.Col>

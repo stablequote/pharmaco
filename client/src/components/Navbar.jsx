@@ -4,6 +4,7 @@ import { Button, Divider, Navbar } from '@mantine/core';
 import { IconHome } from '@tabler/icons-react';
 import { useMediaQuery } from '@mantine/hooks';
 import { useAuth } from '../context/AuthContext'
+import { useTranslation } from 'react-i18next';
 
 const AppNavbar = () => {
 
@@ -16,6 +17,7 @@ const AppNavbar = () => {
   const isMobile = useMediaQuery('(max-width: 375px)');
 
   const { logout } = useAuth()
+  const { t } = useTranslation()
 
   return (
     <Navbar width={ !isMobile ? { base: 250 } : 100} p="xs" sx={{background: '#1D242E'}}>
@@ -23,61 +25,61 @@ const AppNavbar = () => {
         to="/home"
         style={({ isActive }) => (isActive ? activeStyle : undefined)}
       >
-        <IconHome />
-        Home
+        {/* <IconHome /> */}
+        {t("Home")}
       </NavLink>
       <NavLink
         to="/pos"
         style={({ isActive }) => (isActive ? activeStyle : undefined)}
       >
-        POS
+        {t("POS")}
       </NavLink>
       <NavLink
         to="/inventory"
         style={({ isActive }) => (isActive ? activeStyle : undefined)}
       >
-        Inventory
+        {t("INVENTORY")}
       </NavLink>
-      <NavLink
+      {/* <NavLink
         to="/verify"
         style={({ isActive }) => (isActive ? activeStyle : undefined)}
       >
         Verify Transaction
-      </NavLink>
+      </NavLink> */}
       <Divider size={1} my={10} />
       <NavLink
         to="/orders"
         style={({ isActive }) => (isActive ? activeStyle : undefined)}
       >
-        Orders
+        {t("ORDERS")}
       </NavLink>
       <NavLink
         to="/suppliers"
         style={({ isActive }) => (isActive ? activeStyle : undefined)}
       >
-        Suppliers
+        {t("SUPPLIERS")}
       </NavLink>
       {/* <Divider size={1} my={10} /> */}
       <NavLink
         to="/sales"
         style={({ isActive }) => (isActive ? activeStyle : undefined)}
       >
-        Sales
+        {t("SALES")}
       </NavLink>
       <NavLink
         to="/analytics"
         style={({ isActive }) => (isActive ? activeStyle : undefined)}
       >
-        Analytics
+        {t("ANALYTICS")}
       </NavLink>
       <Divider size={1} my={10} />
       <NavLink
         to="/profile"
         style={({ isActive }) => (isActive ? activeStyle : undefined)}
       >
-        Profile
+        {t("PROFILE")}
       </NavLink>
-      <Button color='red' mt="lg" onClick={logout} sx={{position: "absolute", bottom: 22, left: 10, width: "90%"}}>Logout</Button>
+      <Button color='red' mt="lg" onClick={logout} sx={{position: "absolute", bottom: 22, left: 10, width: "90%"}}>{t("LOGOUT")}</Button>
     </Navbar>
   );
 };

@@ -1,11 +1,13 @@
 import { Paper, Group, Text, Divider, Grid, Button, NumberInput } from '@mantine/core'
+import { useTranslation } from 'react-i18next'
 
 function CartOverview({ cart, updateQuantity }) {
+    const { t } = useTranslation();
   return (
         <Paper shadow="xs" p="md" mb="md" radius="lg">
             <Group position="apart">
             <Text weight={500} size="lg">
-                Overview
+                {t("Cart-Overview")}
             </Text>
             </Group>
             <Divider my="sm" />
@@ -13,17 +15,17 @@ function CartOverview({ cart, updateQuantity }) {
             <Grid mb="md">
             <Grid.Col span={6}>
                 <Text weight={500} size="sm">
-                Medicine Name
+                {t("Product-Name")}
                 </Text>
             </Grid.Col>
             <Grid.Col span={3}>
                 <Text weight={500} size="sm">
-                Quantity
+                {t("Quantity")}
                 </Text>
             </Grid.Col>
             <Grid.Col span={3}>
                 <Text weight={500} size="sm">
-                Total Price
+                {t("Unit-Price")}
                 </Text>
             </Grid.Col>
             </Grid>
