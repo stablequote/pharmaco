@@ -14,15 +14,23 @@ import ProductSales from './pages/ProductSales';
 import Login from './pages/Login';
 import PrivateRoute from './pages/ProtectedRoute';
 import { AuthProvider } from './context/AuthContext';
+import { useTranslation } from "react-i18next";
+import UnAuthorized from './pages/UnAuthorized';
 
 const App = () => {
+  const { t, i18n } = useTranslation();
+  
+  const changeLanguage = (lng) => {
+    i18n.changeLanguage(lng);
+  };
+
   return (
     <AuthProvider>
       <Router>
         <Routes>
             {/* <Route index  element={<Login />} /> */}
-            <Route element={<PrivateRoute allowedRoles={['owner', 'manager']} />}>
-              <Route path="/" element={<DashboardLayout />}>
+            <Route element={<PrivateRoute allowedRoles={['owner', 'manager', 'staff']} />}>
+              <Route path="/" element={<DashboardLayout changeLanguage={changeLanguage} value={i18n.language} />}>
                 <Route path="home" element={<Home />} />
                 <Route path="inventory" element={<Inventory />} />
                 <Route path="pos" element={<PosPage />} />
@@ -35,6 +43,7 @@ const App = () => {
             </Route>
           {/* Default Route */}
           <Route path='/login' element={<Login />} />
+          <Route path='/unauthorized' element={<UnAuthorized />} />
         </Routes>
       </Router>
     </AuthProvider>
