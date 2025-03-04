@@ -17,7 +17,7 @@ function Login() {
 
   // login function
   const handleLogin = async () => {
-    const url = `${BASE_URL}/auth/login`
+    const url = 'http://localhost:5005/auth/login'
     const credentials = user;
 
     try {
