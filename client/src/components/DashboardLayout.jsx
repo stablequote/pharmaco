@@ -4,14 +4,14 @@ import { Outlet } from 'react-router-dom';
 import { useDisclosure } from '@mantine/hooks';
 import DashboardHeader from './DashboardHeader';
 
-function DashboardWrapper() {
+function DashboardWrapper({ changeLanguage, value }) {
   const [opened, { open, close }] = useDisclosure(false);
 
   return (
     <AppShell
       padding="md"
       navbar={<AppNavbar />}
-      header={<DashboardHeader />}
+      header={<DashboardHeader changeLanguage={changeLanguage} value={value} />}
       // footer={
       //   <Box height={60} p="xs">
       //     <Text align="center">© 2025 Pharmacy Inc.</Text>
