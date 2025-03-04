@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import { Html5QrcodeScanner } from "html5-qrcode";
 import {
   Card,
@@ -19,6 +19,7 @@ import {
   Center,
   Container,
   Flex,
+  TextInput,
 } from "@mantine/core";
 import { useMediaQuery } from '@mantine/hooks';
 import { showNotification } from "@mantine/notifications";
@@ -27,8 +28,9 @@ import CartPaymentSection from "../components/CartPaymentSection";
 import BarcodeScan from "../components/BarcodeScan";
 import axios from 'axios'
 import { jsPDF } from "jspdf";
-
-// const isMobile = useMediaQuery('(max-width: 375px)');
+import { IconCamera, IconMedicalCross, IconSearch } from "@tabler/icons-react";
+import { useTranslation } from 'react-i18next';
+import ProductCard from "../components/ProductCard";
 
 // Sample product database
 const products = [
@@ -44,12 +46,12 @@ const products = [
     "createdAt": "2025-01-30T14:54:24.234Z",
     "updatedAt": "2025-01-31T14:48:28.414Z",},
   { _id: "5678", product: "Pain Relief Cream", quantity: 1, unit: "lotion", unitPurchasePrice: 1100, unitSalePrice: 1900, barcodeID: "9268839786736" },
-  // { _id: "9101", name: "Vitamin C 100mg",  quantity: 3, unitSalePrice: 30, barcodeID: "3632839390600" },
-  // { _id: "1123", name: "Cough Syrup 100ml",  quantity: 1, unitSalePrice: 80, barcodeID: "7794465889647" },
-  // { _id: "3456", name: "Antacid Tablets", quantity: 6, unitSalePrice: 60, barcodeID: "7497866254327" },
 ];
 
+const data = Array(50).fill(0).map((_, index) => `Item ${index}`);
+
 const PosPage = () => {
+  const { t } = useTranslation()
   const [scannedItem, setScannedItem] = useState(null); // Currently scanned item
   const [cart, setCart] = useState([]); // Cart items
   const [scannerModalOpened, setScannerModalOpened] = useState(false); // Scanner modal state
@@ -66,11 +68,43 @@ const PosPage = () => {
       previous: 0,
       paidAmount: 0,
       dueAmount: 0,
-      paymentType: "Cash",
+      paymentType: "",
+      transactionID: "",
     });
+  const [discountPercentage, setDiscountPercentage] = useState(0);
+
   const [paymentResponse, setPaymentResponse] = useState(null)
+  const [value, setValue] = useState(null)
   const BASE_URL = import.meta.env.VITE_URL;
-  
+  const [inventoryData, setInventoryData] = useState([])
+  const [selectedProductId, setSelectedProductId] = useState(""); // Track selected product ID
+  const [searchValue, onSearchChange] = useState('');
+
+  const fetchInventoryData = async (url) => {
+    try {
+      const res = await axios.get(url);
+      console.log(res);
+      setInventoryData(res.data);
+    } catch (error) {
+      console.error('Error fetching inventory data:', error);
+      setInventoryData([]); // Set to empty array in case of error
+    }
+  };
+
+  useEffect(() => {
+      const url = `${BASE_URL}/inventory/list-all`
+      fetchInventoryData(url)
+      console.log(url) // "123"
+
+      console.log(inventoryData)
+    }, [])
+
+  // Transform the data for the Select component
+  const selectData = inventoryData.map((item) => ({
+    value: item._id,
+    label: item.product,
+  })); 
+
   useEffect(() => {
     if (scannerModalOpened) {
       startScanner();
@@ -154,11 +188,12 @@ const PosPage = () => {
   };
 
   const addToCart = (product) => {
+    console.log(product)
     setCart((prevCart) => {
-      const existingProduct = prevCart.find((item) => item.id === product.id);
+      const existingProduct = prevCart.find((item) => item._id === product._id);
       if (existingProduct) {
         return prevCart.map((item) =>
-          item.id === product.id
+          item._id === product._id
             ? { ...item, quantity: item.quantity + 1 }
             : item
         );
@@ -193,6 +228,7 @@ const PosPage = () => {
   const resetProcess = () => {
     setScannedItem(null);
     setCart([]);
+    setDiscountPercentage(0)
     setReceiptVisible(false);
   };
 
@@ -238,6 +274,16 @@ const PosPage = () => {
   const resetCart = async () => {
     console.log(cart)
     setCart([])
+    setPayment({
+      netTotal: 0,
+      discount: 0,
+      previous: 0,
+      paidAmount: 0,
+      dueAmount: 0,
+      paymentType: "",
+      transactionID: "",
+    })
+    setDiscountPercentage(0)
     console.log(cart)
   }
 
@@ -365,9 +411,18 @@ const autoPrintPDF = () => {
   window.open(doc.output("bloburl"), "_blank");
 };
 
+// ########### discount logic ###########
+const roundToNearestHundred = (number) => {
+  return Math.ceil(number / 100) * 100;
+}
+const totalAfterDiscount = useMemo(() => 
+  cart.reduce((total, item) => roundToNearestHundred(total + item.totalPrice), 0),
+  [cart]
+);
+
 const preparePaymentData = (cart) => {
   return {
-    modeOfPayment: "bankak",
+    modeOfPayment: payment.paymentType,
     soldBy: "Asaad",
     branch: "Thawra 30",
     items: cart.map(item => ({
@@ -379,6 +434,7 @@ const preparePaymentData = (cart) => {
       barcodeID: item.barcodeID
       // totalPrice: item.quantity * item.unitSalePrice // Optional, if needed by server
     })),
+    totalPaidAmount: totalAfterDiscount,
     billID: `BILL - ${Date.now()}`,
   };
 };
@@ -444,36 +500,121 @@ const handlePayment = async () => {
   }
 }
 
+const handleChange = (e) => {
+  setValue(e.target.value);
+  console.log(value)
+}
+
+const handleProductSearch = async () => {
+  const url = "http://localhost:5005/inventory/search-by-name";
+
+  try {
+    const response = await axios.post(url, { name: searchValue });
+    console.log(response.data);
+    setValue(response.data);
+    console.log(value)
+  } catch (error) {
+    showNotification({
+      title: "Error",
+      message: "Product not found",
+      color: "red"
+    })
+    console.error("Error:", error.response?.data || error.message);
+  }
+};
+
+// Handle product selection from the dropdown
+const handleProductSelection = (selectedProductId) => {
+  setSelectedProductId(selectedProductId); // Update the selected product ID
+};
+
+// Handle adding the selected product to the cart
+const handleAddToCart = () => {
+  if (!selectedProductId) {
+    showNotification({
+      title: "No Product Selected",
+      message: "Please select a product from the dropdown.",
+      color: "red",
+    });
+    return;
+  }
+
+  const selectedProduct = inventoryData.find((item) => item._id === selectedProductId);
+  if (selectedProduct) {
+    addToCart(selectedProduct); // Add the selected product to the cart
+    setSelectedProductId(""); // Clear the selected product ID
+    onSearchChange(''); // Clear the search value
+  }
+};
+
+const calculateDiscountedTotal = () => {
+  const netTotal = calculateNetTotal();
+  const discountAmount = (netTotal * discountPercentage) / 100;
+  return netTotal - discountAmount;
+  };
+
+  // ############# APPLYING A DISCOUNT LOGIC #############
+  const applyDiscount = () => {
+    if (!cart.length) return; // Prevent errors if cart is empty
+  
+    const discountFactor = discountPercentage / 100;
+  
+    const updatedCart = cart.map((item) => {
+      const discountAmount = item.unitSalePrice * discountFactor;
+      const discountedPrice = item.unitSalePrice - discountAmount;
+  
+      return {
+        ...item,
+        discountAmount: discountAmount * item.quantity, // Total discount for the item
+        discountedPrice: discountedPrice, // New price per item after discount
+        totalPrice: discountedPrice * item.quantity, // Updated total price per item
+      };
+    });
+  
+    setCart(updatedCart); // Update the cart with new discounted prices
+  };
+
   return (
     <div style={{ padding: "20px", overflow: "hidden !important" }}>
       <Grid gutter="lg">
         {/* Left Side: Scanned Item */}
         <Col xs={12} md={8}>
           <Group position="apart" mb="md">
-            <Title order={3}>Scanned Item</Title>
-            <Button onClick={() => setScanner(!scanner)}>{scanner === true? 'Stop scanner' : 'Start scanner'}</Button>
+            {/* <Title order={3}>Scanned Item</Title> */}
+            <Button variant="outline" leftIcon={<IconCamera size={24} />} onClick={() => setScanner(!scanner)}>{scanner === true? t("Stop-Scanner") : t("Start-Scanner")}</Button>
+            {/* manually search product */}
+            <Grid align="flex-end">
+              <Grid.Col span={8}>
+                <Select
+                  placeholder={t("Type-Product-Name")}
+                  searchable
+                  nothingFound="No product found"
+                  maxDropdownHeight={280}
+                  name="name"
+                  data={selectData}
+                  value={selectedProductId}
+                  onChange={handleProductSelection} // Update selected product ID
+                  onSearchChange={onSearchChange}
+                  searchValue={searchValue}
+                  sx={{width: "280px !important"}}
+                />
+              </Grid.Col>
+              <Grid.Col span={4}>
+                <Button variant="filled" ml={-20} leftIcon={<IconMedicalCross size={25} />} onClick={handleAddToCart}>{t("Add-to-Cart")}</Button>
+              </Grid.Col>
+            </Grid>
           </Group>
-          <Card shadow="sm" p="lg" style={{ textAlign: "center" }}>
-            {/* {scannedItem ? (
-              <>
-                <Text size="lg" weight={700}>
-                  {scannedItem.name}
-                </Text>
-                <Text size="md" color="dimmed">
-                  Price: ${scannedItem.price}
-                </Text>
-              </>
-            ) : (
-              <Text>No item scanned yet</Text>
-            )} */}
 
-            {barcode && <Text>{barcode}</Text>}
-          </Card>
-          
+          {
+            value ?
+            <Center size="xs">
+             <ProductCard product={value} addToCart={addToCart} />
+            </Center>
+            : null
+          }
 
           {/* Modal for Scanner */}
           <Container py="lg" >
-            {/* <div id="reader" style={{margin: '0 auto', width: '30%'}} /> */}
             {scanner && <BarcodeScan barcode={barcode} handleBarcode={handleBarcode} /> }
           </Container>
         </Col>
@@ -495,11 +636,17 @@ const handlePayment = async () => {
               receiptVisible={receiptVisible}
               resetCart={resetCart}
               cart={cart}
+              setCart={setCart}
               handlePayment={handlePayment}
+              discountPercentage={discountPercentage}
+              setDiscountPercentage={setDiscountPercentage}
+              calculateDiscountedTotal={calculateDiscountedTotal}
+              applyDiscount={applyDiscount}
+              totalAfterDiscount={totalAfterDiscount}
+              roundToNearestHundred={roundToNearestHundred}
             />
         </Col>
       </Grid>
-
 
       {/* Modal for Receipt */}
       <Modal
@@ -529,7 +676,7 @@ const handlePayment = async () => {
             </tbody>
           </Table>
           <Text mt="md" weight={700}>
-            Total Amount Paid: &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; SDG {calculateNetTotal()}
+            Total Amount Paid: &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; SDG {totalAfterDiscount > 0 ? totalAfterDiscount : calculateNetTotal()}
           </Text>
         </Paper>
         <Flex justify="space-between"  >
