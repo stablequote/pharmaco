@@ -26,7 +26,7 @@ const salesSchema = mongoose.Schema({
     },
     modeOfPayment: {
         type: String,
-        enum: ['cash', 'bankak', 'fawry'], // Example payment methods
+        enum: ['Cash', 'Bankak', 'Fawry'], // Example payment methods
         // required: true,
     },
     // unitSalePrice: {
@@ -40,6 +40,9 @@ const salesSchema = mongoose.Schema({
     totalAmount: {
         type: Number,
         // required: true,
+    },
+    totalPaidAmount: {
+        type: Number,
     },
     barcodeID: {
         type: String,
@@ -73,7 +76,7 @@ const salesSchema = mongoose.Schema({
     },
     paymentVerified: {
         type: Boolean,
-        default: false,
+        default: true,
     },
 }, {timestamps: true});
 

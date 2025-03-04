@@ -40,7 +40,7 @@ const inventorySchema = mongoose.Schema({
     barcodeID: {
       type: String,
       required: true,
-      unique: true,
+      // unique: true,
     }
     // branch: {
     //     type: mongoose.Schema.Types.ObjectId,

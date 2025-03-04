@@ -5,10 +5,14 @@ const supplierSchema = mongoose.Schema({
         type: String,
         required: true,
     },
+    supplierID: {
+        type: String,
+        unique: true,
+    },
     contactDetails: {
-        phone: String,
-        email: String,
-        location: String,
+        phone: {type: String},
+        email: {type: String},
+        location: {type: String},
     },
     orders: [
         {
