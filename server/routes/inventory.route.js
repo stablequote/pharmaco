@@ -7,8 +7,10 @@ router.post('/add', inventoryController.addProduct);
 router.post('/import-from-excel', inventoryController.imporFromExcel);
 router.get('/list-all', inventoryController.listAllProducts);
 router.get('/search/:barcodeID', inventoryController.searchByBarcode);
-router.put('update/:id', inventoryController.updateProduct);
-router.delete('delete/:id', inventoryController.deleteSingleProduct);
+router.post('/search-by-name', inventoryController.searchByName);
+router.put('/update/:productID', inventoryController.updateProduct);
+router.put('/return', inventoryController.returnProduct);
+router.delete('/delete/:id', inventoryController.deleteSingleProduct);
 router.delete('/delete/multiple/', inventoryController.deleteMultipleProducts);
 
 module.exports = router;
