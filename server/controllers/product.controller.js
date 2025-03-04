@@ -1,5 +1,5 @@
 const Inventory = require('../models/inventory.model');
-const Barcode = require('barcode-generator'); // For barcode generation
+// const Barcode = require('barcode-generator'); // For barcode generation
 
 // Add a product
 exports.addProduct = async (req, res) => {
@@ -40,22 +40,22 @@ exports.searchByBarcode = async (req, res) => {
 };
 
 // Generate barcode for a product
-exports.generateBarcode = async (req, res) => {
-    try {
-        const { productID } = req.params;
+// exports.generateBarcode = async (req, res) => {
+//     try {
+//         const { productID } = req.params;
 
-        const product = await Inventory.findById(productID);
-        if (!product) return res.status(404).json({ message: 'Product not found.' });
+//         const product = await Inventory.findById(productID);
+//         if (!product) return res.status(404).json({ message: 'Product not found.' });
 
-        const barcodeID = Barcode.generate(); // Generate a unique barcode
-        product.barcodeID = barcodeID;
+//         const barcodeID = Barcode.generate(); // Generate a unique barcode
+//         product.barcodeID = barcodeID;
 
-        await product.save();
-        res.status(200).json({ message: 'Barcode generated.', barcodeID });
-    } catch (error) {
-        res.status(500).json({ error: 'Failed to generate barcode.' });
-    }
-};
+//         await product.save();
+//         res.status(200).json({ message: 'Barcode generated.', barcodeID });
+//     } catch (error) {
+//         res.status(500).json({ error: 'Failed to generate barcode.' });
+//     }
+// };
 
 // Update a product
 exports.updateProduct = async (req, res) => {
