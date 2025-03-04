@@ -9,94 +9,39 @@ import {
   Text,
   Flex,
 } from "@mantine/core";
-import { useForm } from "@mantine/form";
 import { DateInput, DatePickerInput } from "@mantine/dates";
-import axios from "axios";
-import { showNotification } from "@mantine/notifications";
+import { useTranslation } from "react-i18next";
 
-const ProductForm = ({ close }) => {
+const ProductForm = ({ close, form, handleSubmit }) => {
   const [expiryDate, setExpiryDate] = useState(null);
   const BASE_URL = import.meta.env.VITE_URL
-
-  const form = useForm({
-    initialValues: {
-      product: "",
-      quantity: 0,
-      unit: "",
-      expiryDate: null,
-      unitPurchasePrice: 0,
-      unitSalePrice: 0,
-      shelf: "",
-      barcodeID: "",
-    },
-
-    validate: {
-      product: (value) =>
-        value.trim().length < 3 ? "Product name must have at least 3 characters" : null,
-      quantity: (value) => (value <= 0 ? "Quantity must be greater than 0" : null),
-      unit: (value) => (value.trim().length === 0 ? "Unit is required" : null),
-      expiryDate: (value) => (!value ? "Expiry date is required" : null),
-      unitPurchasePrice: (value) =>
-        value <= 0 ? "Purchase price must be greater than 0" : null,
-      unitSalePrice: (value) =>
-        value <= 0 ? "Sale price must be greater than 0" : null,
-      shelf: (value) => (value.trim().length === 0 ? "Shelf is required" : null),
-      barcodeID: (value) => (value.trim().length === 0 ? "Barcode ID is required" : null),
-    },
-  });
-
-  const handleSubmit = async (values) => {
-    try {
-      console.log("Submitting product details:", values);
-
-      const formattedValues = {
-        ...values,
-        expiryDate: values.expiryDate ? new Date(values.expiryDate).toISOString() : null,
-      };
-      
-      const url = `${BASE_URL}/inventory/add`
-      const res = await axios.post(url, formattedValues);
-      console.log(res)
-      
-      if(res.status === 201) {
-        showNotification({
-          title: "Successfully added!",
-          message: "Congrats! You have successfully added a new products",
-          color: "green",
-        })
-      }
-
-      close();
-    } catch (error) {
-      console.error("Error submitting product:", error);
-    }
-  };
+  const { t } = useTranslation();
 
   return (
     <Container size="xl">
       <Text align="center" size="lg" weight={600} mb="md">
-        Add Product to Inventory
+        {t("Add-Product-to-Inventory")}
       </Text>
       <Paper shadow="xl" p="lg" radius="md" withBorder>
         <form onSubmit={form.onSubmit(handleSubmit)}>
           <Flex justify="space-between" mb="md" gap="md">
             <TextInput
-              label="Product Name"
-              placeholder="Enter product name"
+              label={t("Product-Name")}
+              placeholder={t("Type-Product-Name")}
               {...form.getInputProps("product")}
               required
               sx={{ flex: 1 }}
             />
             <TextInput
-              label="Barcode ID"
-              placeholder="Enter unique barcode"
+              label={t("Barcode")}
+              placeholder={t("Enter-Barcode")}
               {...form.getInputProps("barcodeID")}
               required
               sx={{ flex: 1 }}
             />
             <TextInput
-              label="Shelf"
-              placeholder="Enter shelf location"
+              label={t("Shelf")}
+              placeholder={t("Enter-Shelf")}
               {...form.getInputProps("shelf")}
               required
               sx={{ flex: 1 }}
@@ -105,7 +50,7 @@ const ProductForm = ({ close }) => {
 
           <Flex justify="space-between" mb="md" gap="md">
             <NumberInput
-              label="Quantity"
+              label={t("Quantity")}
               placeholder="Enter product quantity"
               {...form.getInputProps("quantity")}
               required
@@ -113,13 +58,12 @@ const ProductForm = ({ close }) => {
               sx={{ flex: 1 }}
             />
             <Select
-              label="Unit"
-              placeholder="Select product unit"
+              label={t("Unit")}
+              placeholder={t("Select-Product-Unit")}
               data={[
-                { value: "tablet", label: "Tablet" },
-                { value: "ml", label: "Milliliter (ml)" },
-                { value: "piece", label: "Piece" },
-                { value: "box", label: "Box" },
+                { value: "strip", label: t("Strip") },
+                { value: "bottle", label: t("Bottle") },
+                { value: "piece", label: t("Piece") },
               ]}
               {...form.getInputProps("unit")}
               required
@@ -139,8 +83,8 @@ const ProductForm = ({ close }) => {
             /> */}
             
             <DateInput
-              label="Expiry Date"
-              placeholder="Pick expiry date"
+              label={t("Expiry-Date")}
+              placeholder={t("Pick-Expiry-Date")}
               value={expiryDate}
               onChange={(date) => {
                 setExpiryDate(date);
@@ -162,8 +106,8 @@ const ProductForm = ({ close }) => {
 
           <Flex justify="space-between" mb="md" gap="md">
             <NumberInput
-              label="Purchase Price"
-              placeholder="Enter purchase price"
+              label={t("Purchase-Price")}
+              placeholder={t("Enter-Purchase-Price")}
               {...form.getInputProps("unitPurchasePrice")}
               required
               min={0.01}
@@ -171,8 +115,8 @@ const ProductForm = ({ close }) => {
               sx={{ flex: 1 }}
             />
             <NumberInput
-              label="Sale Price"
-              placeholder="Enter sale price"
+              label={t("Sale-Price")}
+              placeholder={t("Enter-Sale-Price")}
               {...form.getInputProps("unitSalePrice")}
               required
               min={0.01}
@@ -186,10 +130,10 @@ const ProductForm = ({ close }) => {
       {/* Buttons Outside Paper, Separated on Left & Right */}
       <Flex justify="space-between" mt="lg">
         <Button type="submit" variant="filled" color="blue" onClick={form.onSubmit(handleSubmit)}>
-          Add Product
+          {t("Add-Product")}
         </Button>
         <Button variant="filled" color="gray" onClick={close}>
-          Cancel
+          {t("CANCEL")}
         </Button>
       </Flex>
     </Container>

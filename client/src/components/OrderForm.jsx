@@ -1,84 +1,187 @@
-import React, { useState } from 'react';
-import { TextInput, Group, Button, Modal, Select, Flex, } from '@mantine/core';
-import { DateInput } from '@mantine/dates'
-import moment from 'moment';
+import React, { useState } from "react";
+import { TextInput, Group, Button, Modal, Select, Flex } from "@mantine/core";
+import { DateInput } from "@mantine/dates";
+import axios from "axios";
+import { showNotification } from "@mantine/notifications";
+import { useTranslation } from "react-i18next";
 
-const OrderForm = ({ opened, setOpened, handleAddOrder, suppliers }) => {
+const OrderForm = ({ opened, setOpened, handleAddOrder, suppliers, productsList }) => {
+  const { t } = useTranslation();
+
   const [newOrder, setNewOrder] = useState({
-    supplier: '',
-    orderDate: '',
-    deliveryDate: '',
-    status: 'Pending',
-    quantity: 0,
-    product: '',
-    orderAmount: 0,
-    paymentStatus: 'Pending',
+    supplierId: "",
+    products: [{ product: "", quantity: 1, unit: "", unitPurchasePrice: 0, totalPrice: 0 }],
+    orderDate: "",
+    deliveryDate: "",
+    status: "Pending",
+    paymentMethod: "",
+    paymentStatus: "Pending",
   });
 
-  const handleSubmit = () => {
-    handleAddOrder(newOrder);
-    setOpened(false); // Close the modal after adding
+  // Update product field
+  const updateProduct = (index, field, value) => {
+    const updatedProducts = [...newOrder.products];
+    updatedProducts[index][field] = value;
+
+    if (field === "quantity" || field === "unitPurchasePrice") {
+      updatedProducts[index].totalPrice =
+        updatedProducts[index].quantity * updatedProducts[index].unitPurchasePrice;
+    }
+
+    setNewOrder((prev) => ({ ...prev, products: updatedProducts }));
+  };
+
+  // Add new product row
+  const addProduct = () => {
+    setNewOrder((prev) => ({
+      ...prev,
+      products: [...prev.products, { product: "", quantity: 1, unit: "", unitPurchasePrice: 0, totalPrice: 0 }],
+    }));
+  };
+
+  // Remove product row
+  const removeProduct = (index) => {
+    const updatedProducts = newOrder.products.filter((_, i) => i !== index);
+    setNewOrder((prev) => ({ ...prev, products: updatedProducts }));
+  };
+
+  // Submit form
+  const handleSubmit = async () => {
+    console.log(newOrder);
+    const url = "http://localhost:5005/orders/create";
+
+    const payload = {
+      supplierId: newOrder.supplierId,
+      products: newOrder.products.map((item) => ({
+        product: item.product,
+        quantity: item.quantity,
+        unit: item.unit,
+        unitPurchasePrice: item.unitPurchasePrice,
+        totalPrice: item.totalPrice,
+      })),
+      paymentMethod: newOrder.paymentMethod,
+      orderDate: newOrder.orderDate,
+      deliveryDate: newOrder.deliveryDate,
+      orderedBy: "Asaad",
+      branch: "Thawra 30",
+    };
+
+    try {
+      const response = await axios.post(url, payload);
+      if (response.status === 201) {
+        showNotification({ title: "Success", message: "Order placed successfully", color: "green" });
+      } else {
+        showNotification({ title: "Error", message: "Error placing order", color: "red" });
+      }
+    } catch (error) {
+      showNotification({ title: "Error", message: error.message, color: "red" });
+    }
+
+    setOpened(false);
+    setNewOrder({
+      supplierId: "",
+      products: [{ product: "", quantity: 1, unit: "", unitPurchasePrice: 0, totalPrice: 0 }],
+      orderDate: "",
+      deliveryDate: "",
+      status: "Pending",
+      paymentMethod: "",
+      paymentStatus: "Pending",
+    });
   };
 
   return (
-    <Modal opened={opened} onClose={() => setOpened(false)} title="Create New Order">
+    <Modal opened={opened} onClose={() => setOpened(false)} title={t("Create-New-Order")} size="xl">
+      {/* Supplier Selection */}
       <Select
-        label="Select Supplier"
-        value={newOrder.supplier}
-        onChange={(value) => setNewOrder({ ...newOrder, supplier: value })}
+        label={t("SELECT-SUPPLIER")}
+        value={newOrder.supplierId}
+        onChange={(value) => setNewOrder((prev) => ({ ...prev, supplierId: value }))}
         data={suppliers}
         required
       />
-      <TextInput
-        label="Product"
-        value={newOrder.product}
-        onChange={(e) => setNewOrder({ ...newOrder, product: e.target.value })}
-        required
-      />
-      <TextInput
-        label="Quantity"
-        type="number"
-        value={newOrder.quantity}
-        onChange={(e) => setNewOrder({ ...newOrder, quantity: e.target.value })}
-        required
-      />
-      <TextInput
-        label="Order Amount"
-        type="number"
-        value={newOrder.orderAmount}
-        onChange={(e) => setNewOrder({ ...newOrder, orderAmount: e.target.value })}
-        required
-      />
+
+      {/* Product List */}
+      {newOrder.products.map((item, index) => (
+        <Group key={index} grow mt="md">
+          <Select
+            placeholder={t("Type-Product-Name")}
+            searchable
+            nothingFound="No product found"
+            maxDropdownHeight={280}
+            value={item.product}
+            onChange={(value) => updateProduct(index, "product", value)}
+            data={productsList}
+          />
+          <TextInput
+            label={t("Quantity")}
+            type="number"
+            value={item.quantity}
+            onChange={(e) => updateProduct(index, "quantity", Number(e.target.value))}
+            required
+          />
+          <TextInput
+            label={t("Unit-Price")}
+            type="number"
+            value={item.unitPurchasePrice}
+            onChange={(e) => updateProduct(index, "unitPurchasePrice", Number(e.target.value))}
+            required
+          />
+          <Select
+            label={t("Unit")}
+            value={item.unit}
+            data={["Box", "Piece", "Bottle"]}
+            onChange={(value) => updateProduct(index, "unit", value)}
+            required
+          />
+          <TextInput label={t("Total-Price")} type="number" value={item.totalPrice} disabled />
+          <Button color="red" onClick={() => removeProduct(index)} disabled={index === 0}>
+            {t("Remove")}
+          </Button>
+        </Group>
+      ))}
+
+      <Button fullWidth mt="md" onClick={addProduct}>{t("Add-Another-Product")}+</Button>
+
+      {/* Order Date */}
       <DateInput
-        label="Delivery Date"
-        value={newOrder.deliveryDate}
-        onChange={(date) => setNewOrder({ ...newOrder, deliveryDate: date })}
-        // required
-        size="sm" // Matches other inputs
-        allowDeselect // Allows clearing date
-        allowFreeInput // Enables manual date entry
-      />
-      <Select
-        label="Order Status"
-        value={moment(newOrder.status).format("DD-MMMM-YYYY")}
-        onChange={(value) => setNewOrder({ ...newOrder, status: value })}
-        data={['Pending', 'Shipped', 'Delivered']}
-        // required
-        defaultValue="Pending"
-      />
-      <Select
-        label="Payment Status"
-        value={newOrder.paymentStatus}
-        onChange={(value) => setNewOrder({ ...newOrder, paymentStatus: value })}
-        data={['Pending', 'Paid']}
+        label={t("Order-Date")}
+        value={newOrder.orderDate ? new Date(newOrder.orderDate) : null}
+        onChange={(date) => setNewOrder((prev) => ({ ...prev, orderDate: date?.toISOString().split("T")[0] }))}
+        size="sm"
+        allowDeselect
+        allowFreeInput
         required
-        defaultValue="Pending"
       />
+
+      {/* Delivery Date */}
+      <DateInput
+        label={t("DELIVERY-DATE")}
+        value={newOrder.deliveryDate ? new Date(newOrder.deliveryDate) : null}
+        onChange={(date) => setNewOrder((prev) => ({ ...prev, deliveryDate: date?.toISOString().split("T")[0] }))}
+        size="sm"
+        allowDeselect
+        allowFreeInput
+      />
+
+      <Select
+        label={t("Payment-Method")}
+        value={newOrder.paymentMethod}
+        placeholder={t("Select-Payment-Method")}
+        onChange={(value) => setNewOrder((prev) => ({ ...prev, paymentMethod: value }))}
+        data={["Cash", "Bankak"]}
+      />
+
+      <Select
+        label={t("Payment-Status")}
+        value={newOrder.paymentStatus}
+        onChange={(value) => setNewOrder((prev) => ({ ...prev, paymentStatus: value }))}
+        data={[t("PENDING"), t("Paid")]}
+        required
+      />
+
       <Flex justify="space-between" mt="md">
-        <Button variant="light" onClick={() => setOpened(false)}>
-          Cancel
-        </Button>
-        <Button onClick={handleSubmit}>Create Order</Button>
+        <Button variant="light" onClick={() => setOpened(false)}>{t("CANCEL")}</Button>
+        <Button onClick={handleSubmit}>{t("CREATE-ORDER")}</Button>
       </Flex>
     </Modal>
   );
