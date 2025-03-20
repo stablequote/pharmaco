@@ -140,5 +140,8 @@
     "Add-Another-Product": "إضافة منتج آخر",
     "Payment-Status": "حالة الدفع",
     "Paid": "مدفوع",
-    "ADD-NEW-SUPPLIER": "إضافة مورد جديد"
+    "Not-Paid": "لم يتم الدفع",
+    "ADD-NEW-SUPPLIER": "إضافة مورد جديد",
+    "RETURN": "رجوع",
+    "Purchase-Invoice": "فاتورة شراء"
 }

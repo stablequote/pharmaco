@@ -139,5 +139,8 @@
     "Add-Another-Product": "Add Another Product",
     "Payment-Status": "Payment Status",
     "Paid": "Paid",
-    "ADD-NEW-SUPPLIER": "Add New Supplier"
+    "Not-paid": "Not Paid",
+    "ADD-NEW-SUPPLIER": "Add New Supplier",
+    "RETURN": "Return",
+    "Purchase-Invoice": "Purchase Invoice"
 }
