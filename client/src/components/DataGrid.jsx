@@ -7,10 +7,13 @@ import axios from 'axios';
 import { showNotification } from '@mantine/notifications';
 import { useTranslation } from 'react-i18next';
 
-const DataGrid = ({ data, columns, deleteModalOpen, setDeleteModalOpen, handleDelete }) => {
+const DataGrid = ({ data, columns, deleteModalOpen, setDeleteModalOpen, handleDelete, isModalOpen, setIsModalOpen, setInvoiceData, invoiceData, displayInvoice }) => {
 
   const BASE_URL = import.meta.env.VITE_URL
+
   const [tableData, setTableData] = useState([]);
+  const [selectedRow, setSelectedRow] = useState(null);
+
   const { t } = useTranslation();
 
   const handleSaveCell = (cell, value) => {
@@ -105,6 +108,12 @@ const DataGrid = ({ data, columns, deleteModalOpen, setDeleteModalOpen, handleDe
     initialState: {
       pagination: { pageSize: 5 },
       density: 'xs',
+      sorting: [
+        {
+          id: 'orderDate', // Sort by the 'orderDate' column
+          desc: true, // Sort in descending order (newest first)
+        },
+      ],
     },
     renderTopToolbarCustomActions: ({ table }) => (
       <Box
@@ -157,7 +166,31 @@ const DataGrid = ({ data, columns, deleteModalOpen, setDeleteModalOpen, handleDe
         </Button>
       </Box>
     ),
+    mantineTableBodyRowProps: ({ row }) => ({
+      onClick: () => displayInvoice(row),
+      style: { cursor: 'pointer' }, // Change cursor to pointer on hover
+    }),
   });
+  
+  // const displayInvoice = async (row) => {
+
+  //   setSelectedRow(row.original); // Store the clicked row's data
+  //   setIsModalOpen(true); // Open the modal
+  //   console.log(selectedRow)
+    
+  //   const url = `${BASE_URL}/orders/${selectedRow._id}`
+  //   console.log(url)
+
+  //   try {
+  //     const response = await axios.get(url);
+  //     if(response.status === 200) {
+  //       setInvoiceData(response.data)
+  //       console.log(invoiceData)
+  //     }
+  //   } catch (error) {
+  //     console.log(error)
+  //   }
+  // }
 
   return (
     <MantineReactTable
