@@ -136,7 +136,7 @@ const ProductSales = () => {
   
     try {
       // send http request to api
-      const url = `http://localhost:5005/inventory/return`;
+      const url = `${BASE_URL}/inventory/return`;
   
       const res = await axios.put(url, returnRow);
       console.log(res);

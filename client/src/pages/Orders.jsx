@@ -37,10 +37,7 @@ const Orders = () => {
     [t]
   );
 
-  // const data = [
-  //   { orderId: 'ORD001', supplier: 'Supplier A', orderDate: '2025-02-01', status: 'Pending' },
-  //   { orderId: 'ORD002', supplier: 'Supplier B', orderDate: '2025-01-30', status: 'Shipped' },
-  // ];
+  const BASE_URL = import.meta.env.VITE_URL
 
   const [ordersData, setOrdersData] = useState([]);
   const [opened, setOpened] = useState(false);
@@ -60,8 +57,8 @@ const Orders = () => {
   };
 
   const fetchInventory = async () => {
-    const inventoryUrl = 'http://localhost:5005/inventory/list-all';
-    const supplierUrl = 'http://localhost:5005/supplier/list';
+    const inventoryUrl = `${BASE_URL}/inventory/list-all`;
+    const supplierUrl = `${BASE_URL}/supplier/list`;
 
     try {
       const inventoryResponse = await axios.get(inventoryUrl);
@@ -75,7 +72,7 @@ const Orders = () => {
   };
 
   const fetchOrders = async () => {
-    const url = 'http://localhost:5005/orders/list';
+    const url = `${BASE_URL}/orders/list`;
 
     try {
       const response = await axios.get(url);

@@ -7,6 +7,7 @@ import { useTranslation } from "react-i18next";
 
 const OrderForm = ({ opened, setOpened, handleAddOrder, suppliers, productsList }) => {
   const { t } = useTranslation();
+  const BASE_URL = import.meta.env.VITE_URL
 
   const [newOrder, setNewOrder] = useState({
     supplierId: "",
@@ -48,7 +49,7 @@ const OrderForm = ({ opened, setOpened, handleAddOrder, suppliers, productsList 
   // Submit form
   const handleSubmit = async () => {
     console.log(newOrder);
-    const url = "http://localhost:5005/orders/create";
+    const url = `${BASE_URL}/orders/create`;
 
     const payload = {
       supplierId: newOrder.supplierId,

@@ -506,7 +506,7 @@ const handleChange = (e) => {
 }
 
 const handleProductSearch = async () => {
-  const url = "http://localhost:5005/inventory/search-by-name";
+  const url = `${BASE_URL}/inventory/search-by-name`;
 
   try {
     const response = await axios.post(url, { name: searchValue });

@@ -7,9 +7,10 @@ import SupplierCard from './SupplierCard';
 const SuppliersList = () => {
   const [suppliers, setSuppliers] = useState([]);
   const navigate = useNavigate();
+  const BASE_URL = import.meta.env.VITE_URL
 
   useEffect(() => {
-    axios.get('http://localhost:5005/supplier/list')
+    axios.get(`${BASE_URL}/supplier/list`)
       .then((res) => setSuppliers(res.data.supplier))
       .catch((err) => console.error(err));
   }, []);

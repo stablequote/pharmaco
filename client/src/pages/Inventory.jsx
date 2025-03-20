@@ -26,6 +26,8 @@ const Inventory = () => {
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [salesData, setSalesData] = useState([]);
 
+  const BASE_URL = import.meta.env.VITE_URL
+
   const form = useForm({
     initialValues: {
       product: "",
@@ -185,15 +187,6 @@ const Inventory = () => {
     ],
     [t] // ✅ This ensures translation updates when language changes
   );
-
-  const BASE_URL = import.meta.env.VITE_URL
-
-
-  // const fetchInventoryData = async (url) => {
-  //   const res = await axios.get(url)
-  //   console.log(res)
-  //   setInventoryData(res.data)
-  // }
 
   const fetchInventoryData = async (url) => {
     try {

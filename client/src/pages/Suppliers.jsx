@@ -12,9 +12,7 @@ const Suppliers = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-
   const supplierId = searchParams.get("supplierId");
-
   const supplierColumns = useMemo(
     () => [
       { accessorKey: "orderID", header: t("Order-ID"), size: 150 },
@@ -62,9 +60,8 @@ const Suppliers = () => {
     ],
     [t]
   );
+  const BASE_URL = import.meta.env.VITE_URL
   
-  
-
   const [suppliersData, setSuppliersData] = useState([]);
   const [opened, setOpened] = useState(false);
   const [selectedRow, setSelectedRow] = useState(null);
@@ -79,7 +76,7 @@ const Suppliers = () => {
   };
 
   const fetchSuppliers = async () => {
-    const url = 'http://localhost:5005/supplier/list';
+    const url = `${BASE_URL}/supplier/list`;
 
     try {
       const response = await axios.get(url);
@@ -101,7 +98,7 @@ const Suppliers = () => {
   
       try {
         const response = await axios.get(
-          `http://localhost:5005/supplier/orders?supplierId=${supplierId}`
+          `${BASE_URL}/supplier/orders?supplierId=${supplierId}`
         );
         console.log("API Response:", response.data);
   
@@ -136,7 +133,7 @@ const Suppliers = () => {
     setIsModalOpen(true); // Open the modal
     console.log(selectedRow)
     
-    const url = `http://localhost:5005/orders/${selectedRow._id}`
+    const url = `${BASE_URL}/orders/${selectedRow._id}`
     console.log(url)
 
     try {
