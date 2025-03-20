@@ -16,30 +16,17 @@ const SupplierRouter = require("./routes/supplier.route")
 
 const connectDB = async () => {
   try {
-    await mongoose.connect("mongodb://127.0.0.1:27017/", {
+    await mongoose.connect(DB_URI, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     });
-    console.log("✅ Connected to MongoDB");
+    console.log("✅ Connected to Database");
   } catch (error) {
-    console.error("❌ MongoDB Connection Error:", error.message);
+    console.error("❌ Database Connection Error:", error.message);
     process.exit(1); // Exit process if DB connection fails
   }
 };
-
 connectDB(); // Call the function
-
-
-// try {
-//     mongoose.connect("mongodb://localhost:27017/").then(() => {
-//         console.log("connected to db")
-//     })
-// } catch (error) {
-//     console.log(error)
-// }
-
-// // db connection
-// mongoose.set('strictQuery', false)
 
 // middleware
 app.use(cors({
