@@ -137,7 +137,17 @@ exports.getOrders = async (req, res) => {
 // @access Public
 exports.getOrderById = async (req, res) => {
     try {
-        const order = await Order.findById(req.params.id).populate('product supplier');
+        const order = await Order.findById(req.params.id).populate({
+            path: "products",
+            populate: {
+                path: "product",
+                select: "product"
+            },
+        }).populate({
+            path: "supplier",
+            select: "name supplierID"
+        })
+          .lean(); // Converts Mongoose documents to plain JSON
         if (!order) {
             return res.status(404).json({ success: false, message: 'Order not found' });
         }
