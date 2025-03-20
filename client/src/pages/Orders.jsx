@@ -1,11 +1,12 @@
 import React, { useEffect, useState, useMemo } from 'react';
-import { Box, Button, Flex } from '@mantine/core';
+import { Box, Button, Flex, Modal } from '@mantine/core';
 import OrderForm from '../components/OrderForm';
 import DataGrid from '../components/DataGrid';
 import { IconMedicalCrossCircle } from '@tabler/icons-react';
 import axios from 'axios';
 import { useTranslation } from 'react-i18next';
 import moment from 'moment';
+import InvoiceTemplate from '../components/InvoiceTemplate';
 
 const Orders = () => {
   const { t } = useTranslation();
@@ -15,7 +16,7 @@ const Orders = () => {
       { accessorKey: "orderID", header: t("Order-ID"), size: 100 },
       { accessorKey: "supplier.name", header: t("Supplier"), size: 150 },
       { accessorKey: "supplier.supplierID", header: t("Supplier-ID"), size: 150 },
-      { accessorKey: "orderDate", header: t("Order-Date"), size: 120, Cell: ({ cell }) => ( <Box>{moment(cell.getValue()).format("DD-MMMM-YYYY")}</Box>)},
+      { accessorKey: "orderDate", header: t("Order-Date"), sortingFn: 'datetime',size: 120, Cell: ({ cell }) => ( <Box>{moment(cell.getValue()).format("DD-MMMM-YYYY")}</Box>)},
       { accessorKey: "paymentMethod", header: t("Payment-Method"), size: 120 },
       { accessorKey: "totalOrderPrice", header: t("Total-Order-Cost"), size: 120 },
       {
@@ -47,6 +48,9 @@ const Orders = () => {
   const [suppliersData, setSuppliersData] = useState([]);
   const [selectedProductId, setSelectedProductId] = useState('');
   const [selectedSupplierId, setSelectedSupplierId] = useState('');
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedRow, setSelectedRow] = useState(null);
+  const [invoiceData, setInvoiceData] = useState([]);
 
   const handleAddOrder = (newOrder) => {
     setOrdersData((prevData) => [
@@ -78,6 +82,7 @@ const Orders = () => {
       console.log(response.data)
       setOrdersData(response.data.orders);
       console.log(ordersData)
+      console.log(response.data.orders.supplier.supplierID)
     } catch (error) {
       console.log(error)
     }
@@ -114,14 +119,35 @@ const Orders = () => {
     console.log('Selected Supplier ID:', selectedSupplierId); // For debugging
   };
 
+   const displayInvoice = async (row) => {
+  
+      setSelectedRow(row.original); // Store the clicked row's data
+      setIsModalOpen(true); // Open the modal
+      console.log(selectedRow)
+      
+      const url = `${BASE_URL}/orders/${selectedRow._id}`
+      console.log(url)
+  
+      try {
+        const response = await axios.get(url);
+        if(response.status === 200) {
+          setInvoiceData(response.data)
+          console.log(invoiceData)
+        }
+      } catch (error) {
+        console.log(error)
+      }
+    }
+
   return (
     <Box>
+      {/* <InvoiceTemplate order={invoiceData} /> */}
       <Flex mb="xs" justify="flex-end">
         <Button variant="filled" color="green" onClick={() => setOpened(!opened)} leftIcon={<IconMedicalCrossCircle />}>
           {t("CREATE-ORDER")}
         </Button>
       </Flex>
-      <DataGrid data={ordersData} columns={orderColumns} />
+      <DataGrid data={ordersData} columns={orderColumns} isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} displayInvoice={displayInvoice} />
       <OrderForm
         opened={opened}
         setOpened={setOpened}
@@ -132,7 +158,20 @@ const Orders = () => {
         selectedProductId={selectedProductId}
         handleSupplierSelection={handleSupplierSelection}
         selectedSupplierId={selectedSupplierId}
+        setInvoiceData={setInvoiceData}
+        invoiceData={invoiceData}
       />
+      {/* <InvoiceTemplate order={ordersData} /> */}
+      {/* Modal for Invoice */}
+      <Modal
+        opened={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        size={"70rem"}
+        // title="Invoice Details"
+        fullScreen        
+      >
+        {selectedRow && <InvoiceTemplate order={selectedRow} />}
+      </Modal>
     </Box>
   );
 };
