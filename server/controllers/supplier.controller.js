@@ -51,3 +51,62 @@ exports.listSingleSupplier = async (req, res) => {
         res.send(error)
     }
 }
+
+// list all orders by a suppliers
+exports.listSupplierOrders = async (req, res) => {
+    // try {
+    //     const { supplierId } = req.params;
+
+    //     const supplier = Supplier.findbyId(supplierId);
+    //     if(!supplier) {
+    //         res.status(401).json({ message: "No supplier found." })
+    //     }
+
+    //     const supplierOrders = supplier.map
+    // } catch (error) {
+    //     res.status(500).json({message: "Server error"});
+    // }
+
+    try {
+        const { supplierId } = req.query; // Extract supplierId from query parameters
+    
+        if (!supplierId) {
+          return res.status(400).json({ message: 'Supplier ID is required' });
+        }
+    
+        // Find the supplier and populate its orders
+        const supplier = await Supplier.findById(supplierId).populate({
+            path: "orders",
+            populate: {
+              path: "products.product",
+              select: "product unitPurchasePrice", // Keep only necessary fields
+            },
+          })
+          .lean(); // Converts Mongoose documents to plain JSON
+        
+          supplier.orders = supplier.orders.map(order => ({
+            ...order,
+            products: order.products.map(p => ({
+              ...p,
+              product: p.product.product, // Extract actual product name
+            })),
+          }));
+    
+        if (!supplier) {
+          return res.status(404).json({ message: 'Supplier not found' });
+        }
+    
+        res.status(200).json({
+          message: 'Orders fetched successfully',
+          supplier: {
+            _id: supplier._id,
+            name: supplier.name,
+            supplierID: supplier.supplierID,
+            orders: supplier.orders, // List of orders belonging to the supplier
+          },
+        });
+    } catch (error) {
+        console.error('Error fetching supplier orders:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+}
