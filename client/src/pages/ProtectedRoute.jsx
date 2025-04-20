@@ -1,16 +1,21 @@
-import { Navigate, Outlet, useNavigate } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 const PrivateRoute = ({ allowedRoles }) => {
+  const navigate = useNavigate();
   const token = localStorage.getItem("authToken");
-  const user = token ? JSON.parse(atob(token.split(".")[1])) : null; // Decode token payload
-  
-  const navigate = useNavigate()
-  if (!token) {
-    return navigate("/login");
-  }
+  const user = token ? JSON.parse(atob(token.split(".")[1])) : null;
 
-  if (allowedRoles && !allowedRoles.includes(user?.role)) {
-    return navigate("/unauthorized");
+  useEffect(() => {
+    if (!token) {
+      navigate("/login", { replace: true });
+    } else if (allowedRoles && !allowedRoles.includes(user?.role)) {
+      navigate("/unauthorized", { replace: true });
+    }
+  }, [token, user, allowedRoles, navigate]);
+
+  if (!token || (allowedRoles && !allowedRoles.includes(user?.role))) {
+    return null; // or a loading spinner while redirect happens
   }
 
   return <Outlet />;
