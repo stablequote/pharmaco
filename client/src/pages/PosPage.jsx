@@ -58,7 +58,8 @@ const PosPage = () => {
   const [receiptVisible, setReceiptVisible] = useState(false); // Receipt modal visibility
   const html5QrCodeRef = useRef(null); // Reference for the barcode scanner
   const lastScannedRef = useRef(null); // To track the last scanned barcode
-  const [barcode, setBarcode] = useState([]);
+  const inputRef = useRef();
+  const [barcode, setBarcode] = useState("");
   const [scanner, setScanner] = useState(false);
   const scannerRef = useRef(null);
   const receiptRef = useRef(null);
@@ -113,6 +114,24 @@ const PosPage = () => {
     }
     console.log(cart)
   }, [scannerModalOpened]);
+
+  // listening for Enter key down
+  useEffect(() => {
+    inputRef.current?.focus();
+
+    const keepFocus = () => inputRef.current?.focus();
+    window.addEventListener("click", keepFocus);
+    return () => window.removeEventListener("click", keepFocus);
+  }, []);
+  
+
+  const handleKeyDown = async (e) => {
+    if (e.key === "Enter" && barcode.trim() !== "") {
+      await handleBarcode(barcode.trim()); // use your existing function
+      setBarcode(""); // Reset for next scan
+      console.log(barcode)
+    }
+  };
 
   const startScanner = async () => {
     if (!html5QrCodeRef.current) {
@@ -584,7 +603,7 @@ const calculateDiscountedTotal = () => {
             <Button variant="outline" leftIcon={<IconCamera size={24} />} onClick={() => setScanner(!scanner)}>{scanner === true? t("Stop-Scanner") : t("Start-Scanner")}</Button>
             {/* manually search product */}
             <Grid align="flex-end">
-              <Grid.Col span={8}>
+              <Grid.Col span={8} className="no-focus-lock">
                 <Select
                   placeholder={t("Type-Product-Name")}
                   searchable
@@ -604,6 +623,17 @@ const calculateDiscountedTotal = () => {
               </Grid.Col>
             </Grid>
           </Group>
+
+          {/* hidden input field to listen for barcode scanner and Enter key */}
+          <input
+            ref={inputRef}
+            type="text"
+            value={barcode}
+            onChange={(e) => setBarcode(e.target.value)}
+            onKeyDown={handleKeyDown}
+            autoFocus
+            // style={{ opacity: 0, position: "absolute" }}
+          />
 
           {
             value ?
