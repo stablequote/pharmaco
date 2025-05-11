@@ -60,6 +60,8 @@ const PosPage = () => {
   const lastScannedRef = useRef(null); // To track the last scanned barcode
   const inputRef = useRef();
   const [barcode, setBarcode] = useState("");
+  const barcodeBufferRef = useRef("");
+  const lastKeyTimeRef = useRef(Date.now());
   const [scanner, setScanner] = useState(false);
   const scannerRef = useRef(null);
   const receiptRef = useRef(null);
@@ -117,21 +119,27 @@ const PosPage = () => {
 
   // listening for Enter key down
   useEffect(() => {
-    inputRef.current?.focus();
+    const handleGlobalKeyDown = async (e) => {
+      const now = Date.now();
+      if (now - lastKeyTimeRef.current > 100) {
+        barcodeBufferRef.current = ""; // reset buffer if time gap is too large
+      }
+      lastKeyTimeRef.current = now;
 
-    const keepFocus = () => inputRef.current?.focus();
-    window.addEventListener("click", keepFocus);
-    return () => window.removeEventListener("click", keepFocus);
+      if (e.key === "Enter") {
+        const barcode = barcodeBufferRef.current.trim();
+        if (barcode.length > 0) {
+          await handleBarcode(barcode);
+          barcodeBufferRef.current = ""; // reset buffer
+        }
+      } else {
+        barcodeBufferRef.current += e.key;
+      }
+    };
+
+    window.addEventListener("keydown", handleGlobalKeyDown);
+    return () => window.removeEventListener("keydown", handleGlobalKeyDown);
   }, []);
-  
-
-  const handleKeyDown = async (e) => {
-    if (e.key === "Enter" && barcode.trim() !== "") {
-      await handleBarcode(barcode.trim()); // use your existing function
-      setBarcode(""); // Reset for next scan
-      console.log(barcode)
-    }
-  };
 
   const startScanner = async () => {
     if (!html5QrCodeRef.current) {
@@ -252,16 +260,16 @@ const PosPage = () => {
   };
 
   const handleBarcode = async (data) => {
-    setBarcode(data);
     try {
-      const baseUrl = `${BASE_URL}/inventory/search`
+      const baseUrl = `${BASE_URL}/inventory/search`;
       const response = await axios.get(`${baseUrl}/${data}`);
-      console.log(response)
-  
+
       if (response.status === 200) {
         const product = response.data;
         setCart((prevCart) => {
-          const existingProduct = prevCart.find((item) => item.barcodeID === product.barcodeID);
+          const existingProduct = prevCart.find(
+            (item) => item.barcodeID === product.barcodeID
+          );
           if (existingProduct) {
             return prevCart.map((item) =>
               item.barcodeID === product.barcodeID
@@ -269,10 +277,9 @@ const PosPage = () => {
                 : item
             );
           }
-          console.log(cart)
           return [...prevCart, { ...product, quantity: 1 }];
         });
-  
+
         showNotification({
           title: "Item Added",
           message: `${product.product} was added to the cart.`,
@@ -625,15 +632,15 @@ const calculateDiscountedTotal = () => {
           </Group>
 
           {/* hidden input field to listen for barcode scanner and Enter key */}
-          <input
+          {/* <input
             ref={inputRef}
             type="text"
             value={barcode}
             onChange={(e) => setBarcode(e.target.value)}
             onKeyDown={handleKeyDown}
             autoFocus
-            // style={{ opacity: 0, position: "absolute" }}
-          />
+            style={{ opacity: 0, position: "absolute" }}
+          /> */}
 
           {
             value ?
