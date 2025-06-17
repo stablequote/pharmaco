@@ -5,7 +5,7 @@ import axios from "axios";
 import { showNotification } from "@mantine/notifications";
 import { useTranslation } from "react-i18next";
 
-const OrderForm = ({ opened, setOpened, handleAddOrder, suppliers, productsList }) => {
+const OrderForm = ({ opened, setOpened, handleAddOrder, suppliers, productsList, inventoryData, setInventoryData }) => {
   const { t } = useTranslation();
   const BASE_URL = import.meta.env.VITE_URL
 
@@ -30,6 +30,7 @@ const OrderForm = ({ opened, setOpened, handleAddOrder, suppliers, productsList 
     }
 
     setNewOrder((prev) => ({ ...prev, products: updatedProducts }));
+    console.log(newOrder)
   };
 
   // Add new product row
@@ -38,6 +39,7 @@ const OrderForm = ({ opened, setOpened, handleAddOrder, suppliers, productsList 
       ...prev,
       products: [...prev.products, { product: "", quantity: 1, unit: "", unitPurchasePrice: 0, totalPrice: 0 }],
     }));
+    console.log("All current order details", newOrder)
   };
 
   // Remove product row
@@ -107,11 +109,27 @@ const OrderForm = ({ opened, setOpened, handleAddOrder, suppliers, productsList 
           <Select
             placeholder={t("Type-Product-Name")}
             searchable
-            nothingFound="No product found"
+            // nothingFound="No product found"
             maxDropdownHeight={280}
             value={item.product}
             onChange={(value) => updateProduct(index, "product", value)}
-            data={productsList}
+            // data={productsList}
+            data={inventoryData.map((item) => ({
+              value: item._id,
+              label: item.product,
+            }))}
+            creatable
+            getCreateLabel={(query) => `+ Create ${query}`}
+            onCreate={(query) => {
+              // Create a temporary product entry with a fake ID (since it’s not in the DB yet)
+              const newFakeId = `new-${Date.now()}`;
+              const newProduct = { _id: newFakeId, product: query };
+          
+              // Update inventoryData, which automatically updates productsList
+              setInventoryData((prev) => [...prev, newProduct]);
+          
+              return { value: newFakeId, label: query }; // this is passed to onChange
+            }}
           />
           <TextInput
             label={t("Quantity")}

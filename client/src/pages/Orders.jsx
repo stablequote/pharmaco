@@ -150,7 +150,9 @@ const Orders = () => {
         setOpened={setOpened}
         handleAddOrder={handleAddOrder}
         suppliers={suppliersList}
-        productsList={productsList}
+        // productsList={productsList}
+        inventoryData={inventoryData}
+        setInventoryData={setInventoryData}
         handleProductSelection={handleProductSelection}
         selectedProductId={selectedProductId}
         handleSupplierSelection={handleSupplierSelection}
