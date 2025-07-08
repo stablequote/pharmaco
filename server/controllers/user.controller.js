@@ -1,6 +1,7 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user.model'); // Import User schema
+const StaffShift = require("../models/staffShift.model");
 
 // User registration
 exports.register = async (req, res) => {
@@ -37,13 +38,31 @@ exports.login = async (req, res) => {
         const isPasswordValid = await bcrypt.compare(password, user.password);
         if (!isPasswordValid) return res.status(401).json({ error: 'Invalid credentials.' });
 
+        // implementing shift feature
+        const now = new Date();
+        const today = now.toISOString().split("T")[0];
+        const shift = await StaffShift.findOne({ staffId: user._id, date: today });
+
+        if (!shift) {
+            return res.status(403).json({ message: "You have no assigned shift today" });
+        }
+
+        const shiftStart = new Date(`${today}T${shift.startTime}:00`);
+        const shiftEnd = new Date(`${today}T${shift.endTime}:00`);
+
+        if (now < shiftStart || now > shiftEnd) {
+            return res.status(403).json({ message: "You are not within your shift hours" });
+        }
+
         const token = jwt.sign(
             { id: user._id, role: user.role },
             "lion64",
             { expiresIn: '1d' }
         );
 
-        res.status(200).json({ message: 'Login successful.', token });
+        res.status(200).json({ message: 'Login successful.', token,
+            shiftEndTime: shiftEnd.toISOString(),
+            user: { id: user._id, name: user.name }, });
     } catch (error) {
         res.status(500).json({ error: 'Login failed.' });
     }

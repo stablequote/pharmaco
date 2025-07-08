@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const salesController = require('../controllers/sales.controller');
+const requireShift = require("../middlewares/requireShift")
 
 // Sales routes
 router.post('/make-sale', salesController.makeSale);
