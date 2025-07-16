@@ -19,67 +19,63 @@ const AppNavbar = () => {
   const { logout } = useAuth()
   const { t } = useTranslation()
 
+  const user = JSON.parse(localStorage.getItem("user"));
+  const role = user?.role;
+
   return (
-    <Navbar width={ !isMobile ? { base: 250 } : 100} p="xs" sx={{background: '#1D242E'}}>
-      <NavLink
-        to="/home"
-        style={({ isActive }) => (isActive ? activeStyle : undefined)}
-      >
-        {/* <IconHome /> */}
+    <Navbar width={!isMobile ? { base: 250 } : 100} p="xs" sx={{ background: '#1D242E' }}>
+      <NavLink to="/home" style={({ isActive }) => (isActive ? activeStyle : undefined)}>
         {t("Home")}
       </NavLink>
-      <NavLink
-        to="/pos"
-        style={({ isActive }) => (isActive ? activeStyle : undefined)}
-      >
+
+      <NavLink to="/pos" style={({ isActive }) => (isActive ? activeStyle : undefined)}>
         {t("POS")}
       </NavLink>
-      <NavLink
-        to="/inventory"
-        style={({ isActive }) => (isActive ? activeStyle : undefined)}
-      >
+
+      <NavLink to="/inventory" style={({ isActive }) => (isActive ? activeStyle : undefined)}>
         {t("INVENTORY")}
       </NavLink>
-      {/* <NavLink
-        to="/verify"
-        style={({ isActive }) => (isActive ? activeStyle : undefined)}
-      >
-        Verify Transaction
-      </NavLink> */}
+
       <Divider size={1} my={10} />
-      <NavLink
-        to="/orders"
-        style={({ isActive }) => (isActive ? activeStyle : undefined)}
-      >
-        {t("ORDERS")}
-      </NavLink>
-      <NavLink
-        to="/suppliers"
-        style={({ isActive }) => (isActive ? activeStyle : undefined)}
-      >
-        {t("SUPPLIERS")}
-      </NavLink>
-      {/* <Divider size={1} my={10} /> */}
-      <NavLink
-        to="/sales"
-        style={({ isActive }) => (isActive ? activeStyle : undefined)}
-      >
+
+      {(role === "owner" || role === "manager") && (
+        <NavLink to="/orders" style={({ isActive }) => (isActive ? activeStyle : undefined)}>
+          {t("ORDERS")}
+        </NavLink>
+      )}
+
+      {(role === "owner" || role === "manager") && (
+        <NavLink to="/suppliers" style={({ isActive }) => (isActive ? activeStyle : undefined)}>
+          {t("SUPPLIERS")}
+        </NavLink>
+      )}
+
+      <NavLink to="/sales" style={({ isActive }) => (isActive ? activeStyle : undefined)}>
         {t("SALES")}
       </NavLink>
-      <NavLink
-        to="/analytics"
-        style={({ isActive }) => (isActive ? activeStyle : undefined)}
-      >
-        {t("ANALYTICS")}
-      </NavLink>
+
+      {(role === "owner" || role === "manager") && (
+        <NavLink to="/analytics" style={({ isActive }) => (isActive ? activeStyle : undefined)}>
+          {t("ANALYTICS")}
+        </NavLink>
+      )}
+
       <Divider size={1} my={10} />
-      <NavLink
-        to="/profile"
-        style={({ isActive }) => (isActive ? activeStyle : undefined)}
-      >
+
+      {(role === "owner" || role === "manager") && (
+      <NavLink to="/profile" style={({ isActive }) => (isActive ? activeStyle : undefined)}>
         {t("PROFILE")}
       </NavLink>
-      <Button color='red' mt="lg" onClick={logout} sx={{position: "absolute", bottom: 22, left: 10, width: "90%"}}>{t("LOGOUT")}</Button>
+      )}
+
+      <Button
+        color="red"
+        mt="lg"
+        onClick={logout}
+        sx={{ position: "absolute", bottom: 22, left: 10, width: "90%" }}
+      >
+        {t("LOGOUT")}
+      </Button>
     </Navbar>
   );
 };

@@ -15,7 +15,7 @@ import {
 import { IconSearch, IconBell, IconUser } from "@tabler/icons-react";
 import moment from "moment";
 
-const DashboardHeader = ({changeLanguage, value}) => {
+const DashboardHeader = ({changeLanguage, value, shiftRemainingTime}) => {
   const theme = useMantineTheme();
 
   return (
@@ -50,6 +50,7 @@ const DashboardHeader = ({changeLanguage, value}) => {
           <ActionIcon onClick={() => alert("Profile management is coming soon...")}>
             <IconUser size={20} />
           </ActionIcon>
+          <Text color="white">{shiftRemainingTime}</Text>
         </Group>
       </Flex>
     </Header>

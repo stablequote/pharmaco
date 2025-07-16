@@ -4,6 +4,7 @@ import React from 'react'
 import axios from 'axios'
 import { Navigate, useNavigate } from 'react-router-dom'
 import { showNotification } from '@mantine/notifications'
+import bgImage from '../assets/bgImage.jpg'
 
 function Login() {
   const [user, setUser] = useState({
@@ -25,6 +26,9 @@ function Login() {
       const res = await axios.post(url, credentials);
       if(res.status === 200) {
         localStorage.setItem("authToken", res.data.token);
+        localStorage.setItem("shiftEndTime", res.data.shiftEndTime);
+        localStorage.setItem("user", JSON.stringify(res.data.user));
+        console.log("User logged is:", res.data.user)
         setLoading(!loading)
         navigate("/home"); // Redirect to dashboard after login
         console.log(res.data.token);
@@ -51,7 +55,7 @@ function Login() {
 
   return (
     <div>
-      <Container size="md" py="lg">
+      <Container size="md" py="lg" sx={{background: bgImage}}>
         <Center px="lg">
         <Paper shadow='lg' withBorder py="lg" px={30}>
           <Text fz={26} fw={700}>Pharmaco Login</Text>

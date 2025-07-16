@@ -30,6 +30,8 @@ export const AuthProvider = ({ children }) => {
 
             // Clear tokens and user data from localStorage
             localStorage.removeItem("authToken");
+            localStorage.removeItem("shiftEndTime")
+            localStorage.removeItem("user")
         
             // Redirect the user to the login page
             window.location.href = "/login";
