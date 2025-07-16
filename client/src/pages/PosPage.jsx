@@ -49,6 +49,8 @@ const products = [
 ];
 
 const data = Array(50).fill(0).map((_, index) => `Item ${index}`);
+// const userJson = localStorage.getItem("user")
+// const user = JSON.parse(userJson)
 
 const PosPage = () => {
   const { t } = useTranslation()
@@ -82,6 +84,9 @@ const PosPage = () => {
   const [inventoryData, setInventoryData] = useState([])
   const [selectedProductId, setSelectedProductId] = useState(""); // Track selected product ID
   const [searchValue, onSearchChange] = useState('');
+
+  const userJson = localStorage.getItem("user")
+  const user = JSON.parse(userJson)
 
   const fetchInventoryData = async (url) => {
     try {
@@ -447,9 +452,10 @@ const totalAfterDiscount = useMemo(() =>
 );
 
 const preparePaymentData = (cart) => {
+  // console.log(user.firstname)
   return {
     modeOfPayment: payment.paymentType,
-    soldBy: "Asaad",
+    soldBy: user?.firstname || "Unknown", // Safe access  
     branch: "Thawra 30",
     items: cart.map(item => ({
       product: item.product,
