@@ -43,7 +43,8 @@ app.use("/auth", authRouter)
 app.use("/inventory", inventoryRouter)
 app.use('/orders', orderRouter);
 app.use('/sales', salesRouter);
-app.use('/supplier',  expenseRouter)
+app.use('/supplier',  SupplierRouter)
+app.use('/expenses', expenseRouter)
 
 app.get("/test", (req, res) => {
     res.send("server is working")
