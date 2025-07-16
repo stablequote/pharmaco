@@ -35,6 +35,26 @@ exports.listSingleExpense = async (req, res) => {
     }
 }
 
+exports.listTodayExpenses = async (req, res) => {
+    try {
+        const expenses = await Expense.find({});
+
+        const isToday = (dateString) => {
+        const date = new Date(dateString);
+        const now = new Date();
+        const start = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0);
+        const end = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59);
+        return date >= start && date <= end;
+        };
+
+        const todayExpenses = expenses.filter(exp => isToday(exp.createdAt));
+        const totalTodayExpenses = todayExpenses.reduce((sum, exp) => sum + exp.amount, 0);
+        res.status(200).json({ message: "Total Expenses today:", totalTodayExpenses })
+    } catch (error) {
+        res.stauts(500).json({ message: error })
+    }
+}
+
 exports.listAllExpenses = async (req, res) => {
     try {
         const expenses = await Expense.find({});
