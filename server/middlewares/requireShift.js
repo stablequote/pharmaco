@@ -1,12 +1,15 @@
-// middleware/requireShift.js
-const StaffShift = require("../models/staffShift.model");
+const requireShift = async (req, res, next) => {
+  const user = req.user;
 
-module.exports = async (req, res, next) => {
-  const userId = req.user.id;
+  // Allow unrestricted access to managers and owners
+  if (user.role === "owner" || user.role === "manager") {
+    return next();
+  }
+
   const now = new Date();
   const today = now.toISOString().split("T")[0];
+  const shift = await StaffShift.findOne({ staffId: user.id, date: today });
 
-  const shift = await StaffShift.findOne({ staffId: userId, date: today });
   if (!shift) return res.status(403).json({ message: "No shift assigned today" });
 
   const start = new Date(`${today}T${shift.startTime}:00`);
