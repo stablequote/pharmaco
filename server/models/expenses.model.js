@@ -12,7 +12,10 @@ const expenseSchema = mongoose.Schema({
     enum: ["Cash", "Bankak"],
     default: "Cash"
   },
-  createdAt: Date
+  createdAt: {
+    type: Date,
+    default: Date.now()
+  }
 }, { timestaps: true })
 
 module.exports = mongoose.model('Expense', expenseSchema);
