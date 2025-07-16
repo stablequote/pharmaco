@@ -13,6 +13,7 @@ const inventoryRouter = require("./routes/inventory.route")
 const orderRouter = require("./routes/order.route")
 const salesRouter = require("./routes/sales.route")
 const SupplierRouter = require("./routes/supplier.route")
+const expenseRouter = require("./routes/expense.route")
 
 const connectDB = async () => {
   try {
@@ -42,7 +43,7 @@ app.use("/auth", authRouter)
 app.use("/inventory", inventoryRouter)
 app.use('/orders', orderRouter);
 app.use('/sales', salesRouter);
-app.use('/supplier', SupplierRouter);
+app.use('/supplier',  expenseRouter)
 
 app.get("/test", (req, res) => {
     res.send("server is working")
