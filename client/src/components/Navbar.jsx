@@ -36,6 +36,10 @@ const AppNavbar = () => {
         {t("INVENTORY")}
       </NavLink>
 
+      <NavLink to="/expenses" style={({ isActive }) => (isActive ? activeStyle : undefined)}>
+        {t("EXPENSES")}
+      </NavLink>
+
       <Divider size={1} my={10} />
 
       {(role === "owner" || role === "manager") && (

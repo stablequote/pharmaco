@@ -17,6 +17,7 @@ import { AuthProvider } from './context/AuthContext';
 import { useTranslation } from "react-i18next";
 import UnAuthorized from './pages/UnAuthorized';
 import SuppliersList from './components/SuppliersList';
+import Expenses from './pages/Expenses';
 
 const App = () => {
   const { t, i18n } = useTranslation();
@@ -41,6 +42,7 @@ const App = () => {
                 <Route path="suppliers" element={<SuppliersList />} />
                 <Route path="/supplier/orders" element={<Suppliers />} />
                 <Route path="sales" element={<ProductSales />} />
+                <Route path="expenses" element={<Expenses />} />
               </Route>
             </Route>
           {/* Default Route */}
