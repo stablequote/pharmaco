@@ -4,7 +4,7 @@ import React from 'react'
 import axios from 'axios'
 import { Navigate, useNavigate } from 'react-router-dom'
 import { showNotification } from '@mantine/notifications'
-import bgImage from '../assets/bgImage.jpg'
+// import bgImage from '../assets/bgImage.jpg'
 
 function Login() {
   const [user, setUser] = useState({
@@ -55,7 +55,7 @@ function Login() {
 
   return (
     <div>
-      <Container size="md" py="lg" sx={{background: bgImage}}>
+      <Container size="md" py="lg">
         <Center px="lg">
         <Paper shadow='lg' withBorder py="lg" px={30}>
           <Text fz={26} fw={700}>Pharmaco Login</Text>
