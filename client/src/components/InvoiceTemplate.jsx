@@ -64,7 +64,7 @@ const InvoiceTemplate = ({ order }) => {
         <tbody>
           {order.products.map((product, index) => (
             <tr key={index}>
-              <td>{product.product.product}</td>
+              <td>{product.product}</td>
               <td>{product.quantity}</td>
               <td>{product.unit}</td>
               <td>{product.unitPurchasePrice.toLocaleString()}</td>
