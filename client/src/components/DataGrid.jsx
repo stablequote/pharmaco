@@ -1,13 +1,13 @@
 import { MantineReactTable, useMantineReactTable } from 'mantine-react-table';
 import { ActionIcon, Box, Button, Tooltip } from '@mantine/core';
-import { IconDownload, IconEdit, IconTrash } from '@tabler/icons-react';
+import { IconArrowBack, IconDownload, IconEdit, IconTrash } from '@tabler/icons-react';
 import { mkConfig, generateCsv, download } from 'export-to-csv';
 import { useState } from 'react';
 import axios from 'axios';
 import { showNotification } from '@mantine/notifications';
 import { useTranslation } from 'react-i18next';
 
-const DataGrid = ({ data, columns, deleteModalOpen, setDeleteModalOpen, handleDelete, isModalOpen, setIsModalOpen, setInvoiceData, invoiceData, displayInvoice }) => {
+const DataGrid = ({ data, columns, deleteModalOpen, setDeleteModalOpen, handleDelete, isModalOpen, setIsModalOpen, setInvoiceData, invoiceData, displayInvoice, handleReturn }) => {
 
   const BASE_URL = import.meta.env.VITE_URL
 
@@ -69,6 +69,11 @@ const DataGrid = ({ data, columns, deleteModalOpen, setDeleteModalOpen, handleDe
         <Tooltip label="Delete">
           <ActionIcon color="red" onClick={() => handleDelete(row)}>
             <IconTrash />
+          </ActionIcon>
+        </Tooltip>
+        <Tooltip label="Return">
+          <ActionIcon color="orange" onClick={() => handleReturn(row.original)}>
+            <IconArrowBack />
           </ActionIcon>
         </Tooltip>
       </div>

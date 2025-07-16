@@ -16,7 +16,7 @@ const SupplierRouter = require("./routes/supplier.route")
 
 const connectDB = async () => {
   try {
-    await mongoose.connect(DB_LOCAL, {
+    await mongoose.connect("mongodb://localhost:27017",{
       useNewUrlParser: true,
       useUnifiedTopology: true,
     });

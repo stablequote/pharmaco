@@ -137,6 +137,7 @@ const ProductSales = () => {
     try {
       // send http request to api
       const url = `${BASE_URL}/inventory/return`;
+      console.log(returnRow)
   
       const res = await axios.put(url, returnRow);
       console.log(res);
@@ -173,7 +174,7 @@ const ProductSales = () => {
   return (
     <Box pt={46}>
       {/* <Title  mb="xs" color='blue' fz={30}>All sales</Title> */}
-      <DataGrid data={salesData} columns={salesColumns} />
+      <DataGrid data={salesData} columns={salesColumns} handleReturn={handleReturn} />
 
       {/* Edit Modal */}
       <Modal opened={editModalOpen} onClose={() => setEditModalOpen(false)} title="Edit Medicine">
